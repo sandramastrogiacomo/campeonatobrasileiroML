@@ -1,0 +1,107 @@
+package com.campeonatobrasileiro.brasileirao_api.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
+@Entity
+public class PartidaModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull(message = "A data e a hora da partida são obrigatórias!")
+    @Future(message = "A data da partida deve ser no futuro!")
+    private LocalDateTime dataHora;
+
+    @ManyToOne
+    @JoinColumn(name = "clube_mandante_id")
+    @NotNull(message = "O clube mandante é obrigatório!")
+    private ClubeModel clubeMandante;
+
+    @ManyToOne
+    @JoinColumn(name = "clube_visitante_id")
+    @NotNull(message = "O clube visitante é obrigatório!")
+    private ClubeModel clubeVisitante;
+
+    @ManyToOne
+    @JoinColumn(name = "estadop_id")
+    @NotNull(message = "o estádio é obrigatório!")
+    private EstadioModel estadio;
+
+    private Integer golsMandante;
+    private Integer golsVisitante;
+
+    public PartidaModel() {
+    }
+
+    public PartidaModel(Long id, LocalDateTime dataHora, ClubeModel clubeMandante, ClubeModel clubeVisitante, EstadioModel estadio, Integer gomMandante, Integer gomVisitante) {
+        this.id = id;
+        this.dataHora = dataHora;
+        this.clubeMandante = clubeMandante;
+        this.clubeVisitante = clubeVisitante;
+        this.estadio = estadio;
+        this.golsMandante = gomMandante;
+        this.golsVisitante = gomVisitante;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
+    }
+
+    public ClubeModel getClubeMandante() {
+        return clubeMandante;
+    }
+
+    public void setClubeMandante(ClubeModel clubeMandante) {
+        this.clubeMandante = clubeMandante;
+    }
+
+    public ClubeModel getClubeVisitante() {
+        return clubeVisitante;
+    }
+
+    public void setClubeVisitante(ClubeModel clubeVisitante) {
+        this.clubeVisitante = clubeVisitante;
+    }
+
+    public EstadioModel getEstadio() {
+        return estadio;
+    }
+
+    public void setEstadio(EstadioModel estadio) {
+        this.estadio = estadio;
+    }
+
+    public Integer getGolsMandante() {
+        return golsMandante;
+    }
+
+    public void setGolsMandante(Integer golsMandante) {
+        this.golsMandante = golsMandante;
+    }
+
+    public Integer getGolsVisitante() {
+        return golsVisitante;
+    }
+
+    public void setGolsVisitante(Integer golsVisitante) {
+        this.golsVisitante = golsVisitante;
+    }
+}
+
