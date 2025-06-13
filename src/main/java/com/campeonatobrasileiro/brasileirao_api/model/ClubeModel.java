@@ -1,13 +1,11 @@
 package com.campeonatobrasileiro.brasileirao_api.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Table (name = "clubes")
 public class ClubeModel {
 
     @Id
@@ -19,8 +17,10 @@ public class ClubeModel {
     private String nome;
 
     @NotBlank (message = "O estado do clube é obrigatório!")
-    @Size(min = 2, max = 2, message = "O estado deve ter 2 letras!")
+    @Size(min = 2, max = 10, message = "O nome do estado deve ter no mímino 2 e no máximo 10 caracteres!")
     private String estado;
+
+    private boolean ativo = true;
 
     public ClubeModel() {
     }
@@ -32,32 +32,33 @@ public class ClubeModel {
     }
 
     public Long getId() {
-
         return id;
     }
 
     public void setId(Long id) {
-
         this.id = id;
     }
 
     public String getNome() {
-
         return nome;
     }
 
     public void setNome (String nome) {
-
         this.nome = nome;
     }
 
     public  String getEstado() {
-
         return estado;
     }
 
     public void setEstado( String estado) {
-
         this.estado = estado;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+    public void setAtivo( boolean ativo) {
+        this.ativo = ativo;
     }
 }
