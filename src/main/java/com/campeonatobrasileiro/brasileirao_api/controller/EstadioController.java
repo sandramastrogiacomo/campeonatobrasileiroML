@@ -1,6 +1,5 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-
 import com.campeonatobrasileiro.brasileirao_api.dto.EstadioDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRespostaDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.EstadioService;

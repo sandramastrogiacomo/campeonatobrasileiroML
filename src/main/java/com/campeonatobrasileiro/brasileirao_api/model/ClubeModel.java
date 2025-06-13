@@ -25,10 +25,11 @@ public class ClubeModel {
     public ClubeModel() {
     }
 
-    public ClubeModel(Long id, String nome, String estado) {
+    public ClubeModel(Long id, String nome, String estado, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.estado = estado;
+        this.ativo = ativo;
     }
 
     public Long getId() {

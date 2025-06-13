@@ -18,6 +18,10 @@ public class ClubeService {
     @Autowired
     private ClubeRepository clubeRepository;
 
+    public ClubeService(ClubeRepository clubeRepository) {
+    this.clubeRepository = clubeRepository;
+    }
+
     public ClubeRespostaDTO cadastrarClube(ClubeDTO clubeDTO) {
         ClubeModel clubeModel = new ClubeModel();
 
@@ -53,6 +57,10 @@ public class ClubeService {
         ClubeModel clubeModel = clubeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado! "));
         return toRespostaDTO(clubeModel);
+    }
+
+    public Page<ClubeModel> listarClubes(String nome, String estado, Pageable pageable) {
+        return  clubeRepository.findByNomeContainingIgnoreCaseAndAtivo("Palmeiras", true, pageable);
     }
 
     public Page<ClubeRespostaDTO> listar(String nome, String estado, Boolean ativo, int page, int size) {
