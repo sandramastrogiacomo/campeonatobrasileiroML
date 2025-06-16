@@ -1,32 +1,33 @@
-package com.campeonatobrasileiro.brasileirao_api.model;
+package com.campeonatobrasileiro.brasileirao_api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @Entity
 @Table (name = "estádios")
-public class EstadioModel {
+public class EstadioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome do estádio é obrigatório!")
-    @Size (min = 3, max = 100, message = "O nome deve ter no mínimo 3 e no máximo 100 caracteres!")
     private String nome;
 
-    @NotBlank (message = "A cidade é obrigatória!")
     private String cidade;
 
-    @Positive (message = "A capacidade deve ser positiva!")
     private Integer capacidade;
 
-    public EstadioModel() {
+    @OneToMany (mappedBy = "estadio", fetch = FetchType.LAZY)
+    private List<PartidaEntity> partidas;
+
+    public EstadioEntity() {
     }
 
-    public EstadioModel(Long id, String nome, String cidade, Integer capacidade) {
+    public EstadioEntity(Long id, String nome, String cidade, Integer capacidade) {
         this.id = id;
         this.nome = nome;
         this.cidade = cidade;

@@ -1,8 +1,8 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRespostaDTO;
-import com.campeonatobrasileiro.brasileirao_api.model.EstadioModel;
+import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,53 +18,53 @@ public class EstadioService {
     @Autowired
     private EstadioRepository estadioRepository;
 
-    public EstadioRespostaDTO cadastrarEstadio(EstadioDTO estadioDTO) {
-        EstadioModel estadioModel = new EstadioModel();
+    public EstadioResponseDTO cadastrarEstadio(EstadioRequestDTO estadioRequestDTO) {
+        EstadioEntity estadioEntity = new EstadioEntity();
 
-        estadioModel.setNome(estadioDTO.getNome());
-        estadioModel.setCapacidade(estadioDTO.getCapacidade());
-        estadioModel.setCidade(estadioDTO.getCidade());
+        estadioEntity.setNome(estadioRequestDTO.getNome());
+        estadioEntity.setCapacidade(estadioRequestDTO.getCapacidade());
+        estadioEntity.setCidade(estadioRequestDTO.getCidade());
 
-        estadioModel = estadioRepository.save(estadioModel);
-        return toRespostaDTO(estadioModel);
+        estadioEntity = estadioRepository.save(estadioEntity);
+        return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioRespostaDTO atualizarEstadio(Long id, EstadioDTO estadioDTO) {
-        EstadioModel estadioModel =
+    public EstadioResponseDTO atualizarEstadio(Long id, EstadioRequestDTO estadioRequestDTO) {
+        EstadioEntity estadioEntity = new EstadioEntity();
                 estadioRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("Estádio não encontrado!"));
 
-        estadioModel.setNome(estadioDTO.getNome());
-        estadioModel.setCapacidade(estadioDTO.getCapacidade());
-        estadioModel.setCidade(estadioDTO.getCidade());
-        estadioModel = estadioRepository.save(estadioModel);
-        return toRespostaDTO(estadioModel);
+        estadioEntity.setNome(estadioRequestDTO.getNome());
+        estadioEntity.setCapacidade(estadioEntity.getCapacidade());
+        estadioEntity.setCidade(estadioRequestDTO.getCidade());
+        estadioEntity = estadioRepository.save(estadioEntity);
+        return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioRespostaDTO buscarPorId (Long id) {
-        EstadioModel estadioModel = estadioRepository.findById(id)
+    public EstadioResponseDTO buscarPorId (Long id) {
+        EstadioEntity estadioEntity = estadioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
-        return toRespostaDTO(estadioModel);
+        return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioRespostaDTO buscarPorNome (String nome) {
-        EstadioModel estadioModel = estadioRepository.findByNomeIgnoreCase(nome)
+    public EstadioResponseDTO buscarPorNome (String nome) {
+        EstadioEntity estadioEntity = estadioRepository.findByNomeIgnoreCase(nome)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
-        return toRespostaDTO(estadioModel);
+        return toRespostaDTO(estadioEntity);
     }
 
-    public Page<EstadioRespostaDTO>listar(int page, int size) {
+    public Page<EstadioResponseDTO>listar(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
-        Page<EstadioModel> estadios = estadioRepository.findAll(pageable);
+        Page<EstadioEntity> estadios = estadioRepository.findAll(pageable);
         return estadios.map(this:: toRespostaDTO);
     }
 
-    private EstadioRespostaDTO toRespostaDTO(EstadioModel estadioModel) {
-        return new EstadioRespostaDTO(
-                estadioModel.getId(),
-                estadioModel.getNome(),
-                estadioModel.getCidade(),
-                estadioModel.getCapacidade());
+    private EstadioResponseDTO toRespostaDTO(EstadioEntity estadioEntity) {
+        return new EstadioResponseDTO(
+                estadioEntity.getId(),
+                estadioEntity.getNome(),
+                estadioEntity.getCidade(),
+                estadioEntity.getCapacidade());
     }
 
 }

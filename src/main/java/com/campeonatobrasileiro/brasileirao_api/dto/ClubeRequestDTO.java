@@ -3,7 +3,7 @@ package com.campeonatobrasileiro.brasileirao_api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class ClubeDTO {
+public class ClubeRequestDTO {
 
     @NotBlank(message = "O nome do clube é obrigatório!")
     @Size(min = 3, max = 100, message = "O nome do clube deve ter no mínimo 3 e no máximo 100 caracteres!")
@@ -13,11 +13,11 @@ public class ClubeDTO {
     @Size(min = 2, max = 10, message = "O nome do estado deve ter no mínimo 2 e no máximo 100 carateres!")
     private String estado;
 
-    public ClubeDTO() {
+    public ClubeRequestDTO() {
 
     }
 
-    public ClubeDTO(String nome, String estado) {
+    public ClubeRequestDTO(String nome, String estado) {
         this.nome = nome;
         this.estado = estado;
     }
@@ -30,7 +30,7 @@ public class ClubeDTO {
         this.nome = nome;
     }
 
-    public String getEstado() {
+    public String getEstado(String s) {
         return estado;
     }
 

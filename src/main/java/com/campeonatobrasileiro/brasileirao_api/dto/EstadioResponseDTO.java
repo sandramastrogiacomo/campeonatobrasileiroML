@@ -1,12 +1,12 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 
-public class EstadioRespostaDTO {
+public class EstadioResponseDTO {
     private Long id;
     private String nome;
     private String cidade;
     private Integer capacidade;
 
-    public EstadioRespostaDTO(Long id, String nome, String cidade, Integer capacidade) {
+    public EstadioResponseDTO(Long id, String nome, String cidade, Integer capacidade) {
         this.id = id;
         this.nome = nome;
         this.cidade = cidade;

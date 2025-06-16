@@ -1,7 +1,7 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRespostaDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubeResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.ClubeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,13 @@ public class ClubeController {
     private ClubeService clubeService;
 
     @PostMapping
-    public ClubeRespostaDTO cadastrarClube (@Valid @RequestBody ClubeDTO clubeDTO) {
-        return clubeService.cadastrarClube(clubeDTO);
+    public ClubeResponseDTO cadastrarClube (@Valid @RequestBody ClubeRequestDTO clubeRequestDTO) {
+        return clubeService.cadastrarClube(clubeRequestDTO);
     }
 
     @PutMapping("/{id}")
-    public ClubeRespostaDTO atualizarClube(@Valid @RequestBody ClubeDTO clubeDTO, @PathVariable Long id) {
-        return clubeService.atualizarClube(id, clubeDTO);
+    public ClubeResponseDTO atualizarClube(@Valid @RequestBody ClubeRequestDTO clubeRequestDTO, @PathVariable Long id) {
+        return clubeService.atualizarClube(id, clubeRequestDTO);
     }
 
     @DeleteMapping ("/{id}")
@@ -31,12 +31,12 @@ public class ClubeController {
     }
 
     @GetMapping("/{id}")
-    public ClubeRespostaDTO buscarPorId(@PathVariable Long id) {
+    public ClubeResponseDTO buscarPorId(@PathVariable Long id) {
         return clubeService.buscarPorId(id);
     }
 
     @GetMapping
-    public Page<ClubeRespostaDTO> listar(@RequestParam(required = false) String nome,
+    public Page<ClubeResponseDTO> listar(@RequestParam(required = false) String nome,
                                          @RequestParam(required = false) String estado,
                                          @RequestParam(required = false) Boolean ativo,
                                          @RequestParam(defaultValue = "0") int page,

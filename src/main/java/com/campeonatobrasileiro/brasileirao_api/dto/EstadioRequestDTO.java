@@ -1,19 +1,18 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
-public class EstadioDTO {
+public class EstadioRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "O nome do estádio é obrigatório!")
+    @Size(min = 3, max = 100, message = "O nome deve ter no mínimo 3 e no máximo 100 caracteres!")
     private String nome;
 
-    @NotBlank
+    @NotBlank (message = "A cidade é obrigatória!")
     private String cidade;
 
-    @NotNull
-    @Min(1)
+    @NotNull (message = "A cpacidade é obrigatória!")
+    @Positive (message = "A capacidade deve ser positiva!")
     private Integer capacidade;
 
     public String getNome() {

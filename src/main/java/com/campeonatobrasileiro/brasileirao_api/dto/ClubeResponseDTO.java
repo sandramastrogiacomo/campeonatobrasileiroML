@@ -1,16 +1,16 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 
-public class ClubeRespostaDTO {
+public class ClubeResponseDTO {
 
     private Long id;
     private String nome;
     private String estado;
     private boolean ativo;
 
-    public ClubeRespostaDTO() {
+    public ClubeResponseDTO() {
 
     }
-    public ClubeRespostaDTO(Long id, String nome, String estado, boolean ativo) {
+    public ClubeResponseDTO(Long id, String nome, String estado, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.estado = estado;

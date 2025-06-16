@@ -1,4 +1,4 @@
-package com.campeonatobrasileiro.brasileirao_api.model;
+package com.campeonatobrasileiro.brasileirao_api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-public class PartidaModel {
+public class PartidaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,28 +17,28 @@ public class PartidaModel {
     @Future(message = "A data da partida deve ser no futuro!")
     private LocalDateTime dataHora;
 
-    @ManyToOne
+    @ManyToOne (fetch =  FetchType.LAZY)
     @JoinColumn(name = "clube_mandante_id")
     @NotNull(message = "O clube mandante é obrigatório!")
-    private ClubeModel clubeMandante;
+    private ClubeEntity clubeMandante;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "clube_visitante_id")
     @NotNull(message = "O clube visitante é obrigatório!")
-    private ClubeModel clubeVisitante;
+    private ClubeEntity clubeVisitante;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "estadop_id")
     @NotNull(message = "o estádio é obrigatório!")
-    private EstadioModel estadio;
+    private EstadioEntity estadio;
 
     private Integer golsMandante;
     private Integer golsVisitante;
 
-    public PartidaModel() {
+    public PartidaEntity() {
     }
 
-    public PartidaModel(Long id, LocalDateTime dataHora, ClubeModel clubeMandante, ClubeModel clubeVisitante, EstadioModel estadio, Integer gomMandante, Integer gomVisitante) {
+    public PartidaEntity(Long id, LocalDateTime dataHora, ClubeEntity clubeMandante, ClubeEntity clubeVisitante, EstadioEntity estadio, Integer gomMandante, Integer gomVisitante) {
         this.id = id;
         this.dataHora = dataHora;
         this.clubeMandante = clubeMandante;
@@ -64,27 +64,27 @@ public class PartidaModel {
         this.dataHora = dataHora;
     }
 
-    public ClubeModel getClubeMandante() {
+    public ClubeEntity getClubeMandante() {
         return clubeMandante;
     }
 
-    public void setClubeMandante(ClubeModel clubeMandante) {
+    public void setClubeMandante(ClubeEntity clubeMandante) {
         this.clubeMandante = clubeMandante;
     }
 
-    public ClubeModel getClubeVisitante() {
+    public ClubeEntity getClubeVisitante() {
         return clubeVisitante;
     }
 
-    public void setClubeVisitante(ClubeModel clubeVisitante) {
+    public void setClubeVisitante(ClubeEntity clubeVisitante) {
         this.clubeVisitante = clubeVisitante;
     }
 
-    public EstadioModel getEstadio() {
+    public EstadioEntity getEstadio() {
         return estadio;
     }
 
-    public void setEstadio(EstadioModel estadio) {
+    public void setEstadio(EstadioEntity estadio) {
         this.estadio = estadio;
     }
 

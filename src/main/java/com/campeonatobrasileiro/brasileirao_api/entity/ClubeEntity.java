@@ -1,31 +1,34 @@
-package com.campeonatobrasileiro.brasileirao_api.model;
+package com.campeonatobrasileiro.brasileirao_api.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity
 @Table (name = "clubes")
-public class ClubeModel {
+public class ClubeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank (message = "O nome do clube é obrigatório!")
-    @Size(min = 3, max = 100, message = "O nome do clube deve ter no minímo 3 e no máximo 100 caracteres!")
     private String nome;
 
-    @NotBlank (message = "O estado do clube é obrigatório!")
-    @Size(min = 2, max = 10, message = "O nome do estado deve ter no mímino 2 e no máximo 10 caracteres!")
     private String estado;
 
     private boolean ativo = true;
 
-    public ClubeModel() {
+    @OneToMany (mappedBy = "ClubeMandante", fetch = FetchType.LAZY)
+    private List<PartidaEntity> partidasComoMandante;
+
+    @OneToMany(mappedBy = "ClubeVisitante", fetch = FetchType.LAZY)
+    private List<PartidaEntity> partidasComoVisitante;
+
+
+    public ClubeEntity() {
     }
 
-    public ClubeModel(Long id, String nome, String estado, boolean ativo) {
+    public ClubeEntity(Long id, String nome, String estado, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.estado = estado;
@@ -59,6 +62,7 @@ public class ClubeModel {
     public boolean isAtivo() {
         return ativo;
     }
+
     public void setAtivo( boolean ativo) {
         this.ativo = ativo;
     }
