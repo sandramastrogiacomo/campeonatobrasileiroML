@@ -32,8 +32,8 @@ public class GlobalExceptionHandlerTest {
     @Test
     public void deveRetornarErros_quandoDTOInvalido() throws Exception {
         ClubeRequestDTO clubeInvalido = new ClubeRequestDTO();
-        clubeInvalido.setNome("A"); // inválido por ser menor que 3
-        clubeInvalido.setEstado(""); // inválido por ser em branco
+        clubeInvalido.setNome("A");
+        clubeInvalido.setEstado("");
 
         mockMvc.perform(post("/clubes")
                         .contentType(MediaType.APPLICATION_JSON)
