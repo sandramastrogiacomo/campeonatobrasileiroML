@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping ("/clubes")
 public class ClubeController {
 
-    @Autowired
-    private ClubeService clubeService;
+
+    private final ClubeService clubeService;
+    public ClubeController(ClubeService clubeService) {
+        this.clubeService = clubeService;
+    }
 
     @PostMapping
     public ClubeResponseDTO cadastrarClube (@Valid @RequestBody ClubeRequestDTO clubeRequestDTO) {

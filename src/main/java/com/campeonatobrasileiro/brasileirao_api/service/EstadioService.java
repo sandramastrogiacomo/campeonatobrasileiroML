@@ -15,8 +15,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EstadioService {
 
-    @Autowired
-    private EstadioRepository estadioRepository;
+
+    private final EstadioRepository estadioRepository;
+
+    public EstadioService(EstadioRepository estadioRepository) {
+        this.estadioRepository = estadioRepository;
+    }
 
     public EstadioResponseDTO cadastrarEstadio(EstadioRequestDTO estadioRequestDTO) {
         EstadioEntity estadioEntity = new EstadioEntity();

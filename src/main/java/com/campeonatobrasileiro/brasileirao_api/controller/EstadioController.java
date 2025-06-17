@@ -4,7 +4,6 @@ import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.EstadioService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/estadios")
 public class EstadioController {
 
-    @Autowired
-    private EstadioService estadioService;
+
+    private final EstadioService estadioService;
+
+    public EstadioController(EstadioService estadioService) {
+        this.estadioService = estadioService;
+    }
 
     @PostMapping
     public EstadioResponseDTO cadastrarEstadio (@Valid @RequestBody EstadioRequestDTO estadioRequestDTO) {
