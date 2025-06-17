@@ -5,12 +5,15 @@ import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EstadioService {
@@ -51,10 +54,9 @@ public class EstadioService {
         return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioResponseDTO buscarPorNome (String nome) {
-        EstadioEntity estadioEntity = estadioRepository.findByNomeIgnoreCase(nome)
-                .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
-        return toRespostaDTO(estadioEntity);
+    public List<EstadioResponseDTO> buscarPorNome (String nome) {
+        Optional<EstadioEntity> entidades = estadioRepository.findByNomeIgnoreCase(nome);
+        return entidades.stream().map(this::toRespostaDTO).toList();
     }
 
     public Page<EstadioResponseDTO>listar(int page, int size) {
@@ -71,4 +73,7 @@ public class EstadioService {
                 estadioEntity.getCapacidade());
     }
 
+    public Page<EstadioResponseDTO> listar(Pageable pageable) {
+        return estadioRepository.findAll(pageable).map(this::toRespostaDTO);
+    }
 }

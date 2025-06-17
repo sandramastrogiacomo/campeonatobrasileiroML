@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/estadios")
 public class EstadioController {
@@ -34,7 +36,7 @@ public class EstadioController {
     }
 
     @GetMapping("/nome/{nome}")
-    public EstadioResponseDTO buscarPorNome (@PathVariable String nome) {
+    public List<EstadioResponseDTO> buscarPorNome (@PathVariable String nome) {
         return estadioService.buscarPorNome(nome);
     }
 

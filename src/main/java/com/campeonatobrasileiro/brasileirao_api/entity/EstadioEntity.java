@@ -1,14 +1,11 @@
 package com.campeonatobrasileiro.brasileirao_api.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
 @Entity
-@Table (name = "estádios")
+@Table (name = "estadios")
 public class EstadioEntity {
 
     @Id
