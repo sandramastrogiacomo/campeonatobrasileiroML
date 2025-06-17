@@ -57,29 +57,14 @@ public class ClubeService {
         return toRespostaDTO(clubeEntity);
     }
 
-    public Page<ClubeEntity> listarClubes(String nome, String estado, Pageable pageable) {
-        nome = nome == null ? "" : nome;
-        estado = estado == null ? "" : estado;
-        return  clubeRepository.findByNomeContainingIgnoreCaseAndEstadoContainingIgnoreCaseAndAtivoTrue(nome,estado, pageable);
-    }
-
     public Page<ClubeResponseDTO> listar(String nome, String estado, Boolean ativo, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
 
-        Page<ClubeEntity> clubes;
-        if (estado != null && ativo != null) {
-            clubes = clubeRepository.findByEstadoIgnoreCaseAndAtivo (estado, ativo, pageable);
-        } else if (estado != null) {
-            clubes = clubeRepository.findByEstadoIgnoreCase(estado, pageable);
-        } else if (nome != null && ativo != null) {
-            clubes = clubeRepository.findByNomeContainingIgnoreCaseAndAtivo(nome, ativo, pageable);
-        } else if (ativo != null) {
-            clubes = clubeRepository.findByAtivo(ativo, pageable);
-        } else {
-            clubes = clubeRepository.findAll(pageable);
-        }
-        return clubes.map(this::toRespostaDTO);
+        Page<ClubeEntity> clubes = clubeRepository.buscarComFiltros(nome,estado,ativo, pageable);
+
+       return clubes.map(this::toRespostaDTO);
     }
+
     private ClubeResponseDTO toRespostaDTO(ClubeEntity clubeEntity) {
         return new ClubeResponseDTO(
                 clubeEntity.getId(),

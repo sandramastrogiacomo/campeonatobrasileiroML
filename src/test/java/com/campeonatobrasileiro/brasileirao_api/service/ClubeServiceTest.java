@@ -108,28 +108,24 @@ public class ClubeServiceTest {
     }
 
     @Test
-    public void listarClubes() {
+    public void listarClubesComFiltros() {
         String nome = "Palmeiras";
         String estado = "SP";
         Pageable pageable = PageRequest.of(0, 10);
 
         ClubeEntity clube1 = new ClubeEntity(1L, "Palmeiras", "SP", true);
-        ClubeEntity clube2 = new ClubeEntity(2L, "Palmeiras B", "SP", true);
-        List<ClubeEntity> clubes = Arrays.asList(clube1, clube2);
-        Page<ClubeEntity> clubePage = new PageImpl(clubes, pageable, clubes.size());
+        ClubeEntity clube2 = new ClubeEntity(2L, "Flamengo", "RJ", true);
+        List<ClubeEntity> lista = Arrays.asList(clube1, clube2);
+        Page<ClubeEntity> clubePage = new PageImpl <>(lista);
 
-        when(clubeRepository.findByNomeContainingIgnoreCaseAndEstadoContainingIgnoreCaseAndAtivoTrue(nome, estado, pageable))
+        when(clubeRepository.buscarComFiltros("","SP",true,
+                PageRequest.of(0, 10, Sort.by("nome").ascending())))
                 .thenReturn(clubePage);
 
-        Page<ClubeEntity> resultado = clubeService.listarClubes(nome, estado, pageable);
+        Page<ClubeResponseDTO> resultado = clubeService.listar("","SP", true, 0,10);
 
-        assertEquals(2, resultado.getContent().size());
+        assertEquals(2, resultado.getTotalElements());
         assertEquals("Palmeiras", resultado.getContent().get(0).getNome());
-        assertEquals("SP", resultado.getContent().get(0).getEstado());
-        assertEquals(1L, resultado.getContent().get(0).getId());
-        verify(clubeRepository, times(1))
-                .findByNomeContainingIgnoreCaseAndEstadoContainingIgnoreCaseAndAtivoTrue (nome, estado, pageable);
-
     }
 
     @Test
@@ -166,37 +162,7 @@ public class ClubeServiceTest {
         assertEquals("Clube não encontrado!", exception.getMessage());
     }
 
-    @Test
-    public void listarClubeFiltrarNomeEAtivo() {
-        String nome = "Palmeiras";
-        Boolean ativo = true;
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("nome").ascending());
-        List<ClubeEntity> clubes =List.of (new ClubeEntity(1L, "Palmeiras", "SP", true));
-        Page<ClubeEntity> clubePage = new PageImpl(clubes);
 
-        when (clubeRepository.findByNomeContainingIgnoreCaseAndAtivo (nome, ativo, pageable))
-                .thenReturn(clubePage);
-        Page<ClubeResponseDTO> resultado = clubeService.listar (nome, null, ativo,0,10 );
-        assertEquals(1, resultado.getContent().size());
-        assertEquals("Palmeiras", resultado.getContent().get(0).getNome());
-    }
-
-    @Test
-    public void listaClubeFiltrarEstadoEAtivo() {
-        String estado = "SP";
-        Boolean ativo = true;
-        Pageable pageable = PageRequest.of(0, 10);
-        List<ClubeEntity> clubes = List.of (new ClubeEntity(2L, "Palmeiras", "SP", true));
-        Page<ClubeEntity> clubePage = new PageImpl(clubes);
-
-        when(clubeRepository.findByEstadoIgnoreCaseAndAtivo (eq("SP"), eq(true),
-                any( Pageable.class))).thenReturn(clubePage);
-
-        Page<ClubeResponseDTO> resultado = clubeService.listar (null, estado, ativo,0,10 );
-
-        assertEquals(1, resultado.getContent().size());
-        assertEquals("SP", clubePage.getContent().get(0).getEstado());
-    }
 }
 
 
