@@ -37,13 +37,13 @@ public class EstadioService {
     }
 
     public EstadioResponseDTO atualizarEstadio(Long id, EstadioRequestDTO estadioRequestDTO) {
-        EstadioEntity estadioEntity = new EstadioEntity();
-                estadioRepository.findById(id).orElseThrow(() ->
-                        new EntityNotFoundException("Estádio não encontrado!"));
+        EstadioEntity estadioEntity = estadioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
         estadioEntity.setNome(estadioRequestDTO.getNome());
         estadioEntity.setCapacidade(estadioEntity.getCapacidade());
         estadioEntity.setCidade(estadioRequestDTO.getCidade());
+
         estadioEntity = estadioRepository.save(estadioEntity);
         return toRespostaDTO(estadioEntity);
     }

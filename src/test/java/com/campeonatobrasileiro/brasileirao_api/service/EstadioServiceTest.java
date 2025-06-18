@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +27,7 @@ public class EstadioServiceTest {
 
     @Mock
     private EstadioRepository estadioRepository;
+    private EstadioEntity estadio;
 
     @Test
     void cadastrarEstadioComSucesso() {
@@ -51,16 +51,31 @@ public class EstadioServiceTest {
     @Test
     void atualizarEstadioComSucesso() {
         Long id = 1L;
+
         EstadioRequestDTO estadioRequestDTO = new EstadioRequestDTO();
+        estadioRequestDTO.setNome("Neo Quimica Arena");
+        estadioRequestDTO.setCidade("Sao Paulo");
+        estadioRequestDTO.setCapacidade(47000);
+
         EstadioEntity estadioEntityExistente = new EstadioEntity(id, "Allianz Park", "São Paulo", 50000);
 
+        EstadioEntity estadioEntityAtualizado = new EstadioEntity(id,
+        estadioRequestDTO.getNome(),
+        estadioRequestDTO.getCidade(),
+        estadioRequestDTO.getCapacidade());
+
         Mockito.when(estadioRepository.findById(id)).thenReturn(Optional.of(estadioEntityExistente));
+        Mockito.when(estadioRepository.save(Mockito.any(EstadioEntity.class))).thenReturn(estadioEntityAtualizado);
 
-        Assertions.assertEquals(estadioRequestDTO.getNome(), estadioEntityExistente.getNome());
-        Assertions.assertEquals(estadioRequestDTO.getCidade(), estadioEntityExistente.getCidade());
-        Assertions.assertEquals(estadioRequestDTO.getCapacidade(), estadioEntityExistente.getCapacidade());
+        EstadioResponseDTO estadioResponseDTO = estadioService.atualizarEstadio(id,estadioRequestDTO);
 
-        Mockito.verify(estadioRepository).save(Mockito.any());
+        Assertions.assertNotNull(estadioResponseDTO);
+        Assertions.assertEquals(estadioRequestDTO.getNome(), estadioResponseDTO.getNome());
+        Assertions.assertEquals(estadioRequestDTO.getCidade(), estadioResponseDTO.getCidade());
+        Assertions.assertEquals(estadioRequestDTO.getCapacidade(), estadioResponseDTO.getCapacidade());
+
+        Mockito.verify(estadioRepository).findById(id);
+        Mockito.verify(estadioRepository).save(Mockito.any(EstadioEntity.class));
     }
    @Test
     void buscarEstadioPorIdComSucesso() {
@@ -77,23 +92,22 @@ public class EstadioServiceTest {
         Mockito.verify(estadioRepository, Mockito.times(1)).findById(id);
 
    }
-   @Test
+    @Test
     void buscarEstadioPorNomeComSucesso() {
         String nome = "Allianz Park";
+       EstadioEntity estadio = new EstadioEntity(1l,"Allianz Park","São Paulo",50000);
 
-        List<EstadioEntity> lista = List.of(new EstadioEntity(1L,"Allianz Park", "São Paulo", 50000));
+        Mockito.when(estadioRepository.findByNomeIgnoreCase(nome)).thenReturn(Optional.of(estadio));
 
-        Mockito.when(estadioRepository.findByNomeIgnoreCase(nome));
+        List<EstadioResponseDTO> resultado = estadioService. buscarPorNome(nome);
 
-        List<EstadioResponseDTO> resultado = estadioService.buscarPorNome(nome);
         Assertions.assertEquals(1, resultado.size());
-        Assertions.assertEquals(resultado.get(0).getNome(), lista.get(0).getNome());
-        Assertions.assertEquals(resultado.get(0).getCapacidade(), lista.get(0).getCapacidade());
-        Assertions.assertEquals(resultado.get(0).getCapacidade(), lista.get(0).getCapacidade());
+        Assertions.assertEquals("Allianz Park", resultado.get(0).getNome());
+        Assertions.assertEquals("São Paulo", resultado.get(0).getCidade());
+        Assertions.assertEquals(50000, resultado.get(0).getCapacidade());
 
         Mockito.verify(estadioRepository).findByNomeIgnoreCase(nome);
-
-   }
+    }
 
    @Test
     void listarEstadioComPaginacao() {
@@ -107,7 +121,7 @@ public class EstadioServiceTest {
 
        Assertions.assertEquals(2, pagina.getContent ().size());
        Assertions.assertEquals ("Allianz Park", pagina.getContent().get(0).getNome());
-       Assertions.assertEquals ("Maracanã", pagina.getContent().get(0).getNome(), lista.get(0).getNome());
+       Assertions.assertEquals ("Maracanã", pagina.getContent().get(1).getNome());
 
        Mockito.verify(estadioRepository, Mockito.times(1)).findAll(pageable);
    }
