@@ -2,7 +2,6 @@ package com.campeonatobrasileiro.brasileirao_api.controller;
 
 import com.campeonatobrasileiro.brasileirao_api.dto.PartidaRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.PartidaResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.repository.PartidaRepository;
 import com.campeonatobrasileiro.brasileirao_api.service.PartidaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

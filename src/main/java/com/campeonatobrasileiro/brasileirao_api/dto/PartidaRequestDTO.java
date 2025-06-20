@@ -1,7 +1,4 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
-
-import com.campeonatobrasileiro.brasileirao_api.entity.ClubeEntity;
-import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,15 +12,15 @@ public class PartidaRequestDTO {
 
 
     @NotNull(message = "O clube mandante é obrigatório!")
-    private ClubeEntity clubeMandante;
+    private Long clubeMandanteId;
 
 
     @NotNull(message = "O clube visitante é obrigatório!")
-    private ClubeEntity clubeVisitante;
+    private Long clubeVisitanteId;
 
 
     @NotNull(message = "o estádio é obrigatório!")
-    private EstadioEntity estadio;
+    private Long estadioId;
 
     private Integer golsMandante;
     private Integer golsVisitante;
@@ -36,28 +33,28 @@ public class PartidaRequestDTO {
         this.dataHora = dataHora;
     }
 
-    public ClubeEntity getClubeMandante() {
-        return clubeMandante;
+    public Long getClubeMandanteId() {
+        return clubeMandanteId;
     }
 
-    public void setClubeMandante(ClubeEntity clubeMandante) {
-        this.clubeMandante = clubeMandante;
+    public void setClubeMandanteId(Long clubeMandanteId) {
+        this.clubeMandanteId = clubeMandanteId;
     }
 
-    public ClubeEntity getClubeVisitante() {
-        return clubeVisitante;
+    public Long getClubeVisitanteId() {
+        return clubeVisitanteId;
     }
 
-    public void setClubeVisitante(ClubeEntity clubeVisitante) {
-        this.clubeVisitante = clubeVisitante;
+    public void setClubeVisitanteId(Long clubeVisitanteId) {
+        this.clubeVisitanteId = clubeVisitanteId;
     }
 
-    public EstadioEntity getEstadio() {
-        return estadio;
+    public Long getEstadioId() {
+        return estadioId;
     }
 
-    public void setEstadio(EstadioEntity estadio) {
-        this.estadio = estadio;
+    public void setEstadioId(Long estadioId) {
+        this.estadioId = estadioId;
     }
 
     public Integer getGolsMandante() {

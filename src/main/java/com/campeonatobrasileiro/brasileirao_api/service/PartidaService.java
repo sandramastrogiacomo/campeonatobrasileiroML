@@ -30,11 +30,11 @@ public class PartidaService {
     }
 
     public PartidaResponseDTO cadastrarPartida(PartidaRequestDTO partidaRequestDTO) {
-        ClubeEntity clubeMandante = clubeRepository.findById(partidaRequestDTO.getClubeMandante().getId())
+        ClubeEntity clubeMandante = clubeRepository.findById(partidaRequestDTO.getClubeMandanteId())
                 .orElseThrow(() -> new EntityNotFoundException("Clube mandante não encontrado!"));
-        ClubeEntity clubeVisitante = clubeRepository.findById(partidaRequestDTO.getClubeVisitante().getId())
+        ClubeEntity clubeVisitante = clubeRepository.findById(partidaRequestDTO.getClubeVisitanteId())
                 .orElseThrow(() -> new EntityNotFoundException("Visitante não encontrado!"));
-       EstadioEntity estadio = estadioRepository.findById(partidaRequestDTO.getEstadio().getId())
+       EstadioEntity estadio = estadioRepository.findById(partidaRequestDTO.getEstadioId())
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
         PartidaEntity partidaEntity = new PartidaEntity();

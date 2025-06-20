@@ -23,7 +23,7 @@ public class PartidaEntity {
     private ClubeEntity clubeVisitante;
 
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "estadop_id",nullable = false)
+    @JoinColumn(name = "estadio_id",nullable = false)
     private EstadioEntity estadio;
 
     private Integer golsMandante;
@@ -32,14 +32,14 @@ public class PartidaEntity {
     public PartidaEntity() {
     }
 
-    public PartidaEntity(Long id, LocalDateTime dataHora, ClubeEntity clubeMandante, ClubeEntity clubeVisitante, EstadioEntity estadio, Integer gomMandante, Integer gomVisitante) {
+    public PartidaEntity(Long id, LocalDateTime dataHora, ClubeEntity clubeMandante, ClubeEntity clubeVisitante, EstadioEntity estadio, Integer golsMandante, Integer golsVisitante) {
         this.id = id;
         this.dataHora = dataHora;
         this.clubeMandante = clubeMandante;
         this.clubeVisitante = clubeVisitante;
         this.estadio = estadio;
-        this.golsMandante = gomMandante;
-        this.golsVisitante = gomVisitante;
+        this.golsMandante = golsMandante;
+        this.golsVisitante = golsVisitante;
     }
 
     public Long getId() {
