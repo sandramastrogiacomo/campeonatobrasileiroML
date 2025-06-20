@@ -4,6 +4,7 @@ import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class EstadioServiceTest {
@@ -126,4 +129,39 @@ public class EstadioServiceTest {
        Mockito.verify(estadioRepository, Mockito.times(1)).findAll(pageable);
    }
 
+
+   @Test
+    void buscarEstadioPorIdDeveLancarExcecao() {
+       Mockito.when(estadioRepository.findById(999L)).thenReturn(Optional.empty());
+
+       EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+           estadioService.buscarPorId(999L);
+       });
+
+       assertEquals("Estádio não encontrado!", exception.getMessage());
+   }
+
+    @Test
+    void listarEstadioPorCidade() {
+        Pageable pageable = PageRequest.of(0, 10);
+        String cidade = "São Paulo";
+
+        EstadioEntity estadioEntity1 = new EstadioEntity(1L, "Allianz Park", "São Paulo", 50000);
+        EstadioEntity estadioEntity2 = new EstadioEntity(2L, "Morumbis", "São Paulo", 55000);
+        List<EstadioEntity> lista = List.of(estadioEntity1, estadioEntity2);
+
+        Page<EstadioEntity> page = new PageImpl<>(lista);
+
+        Mockito.when(estadioRepository.findByCidadeContainingIgnoreCase(cidade, pageable)).thenReturn(page);
+
+        Page<EstadioResponseDTO> resultado = estadioService.listarPorCidade(cidade,pageable);
+
+        Assertions.assertEquals(2, resultado.getContent().size());
+        Assertions.assertEquals("Allianz Park", resultado.getContent().get(0).getNome());
+        Assertions.assertEquals("Morumbis", resultado.getContent().get(1).getNome());
+
+        Mockito.verify(estadioRepository).findByCidadeContainingIgnoreCase(cidade, pageable);
+    }
+
 }
+

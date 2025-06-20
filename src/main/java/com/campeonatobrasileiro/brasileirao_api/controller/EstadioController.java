@@ -5,6 +5,8 @@ import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.EstadioService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,10 +42,20 @@ public class EstadioController {
         return estadioService.buscarPorNome(nome);
     }
 
+    @GetMapping("/buscar-por-cidade")
+    public Page<EstadioResponseDTO> buscarPorCidade (
+        @RequestParam String cidade,
+        @RequestParam int pagina,
+        @RequestParam int capacidade) {
+
+        Pageable pageable = PageRequest.of(pagina,capacidade);
+        return estadioService.listarPorCidade(cidade, pageable);
+        }
+
     @GetMapping
     public Page<EstadioResponseDTO> listarEstadios(@RequestParam(defaultValue = "0" )int page,
                                                    @RequestParam (defaultValue = "10") int size) {
         return estadioService.listar(page, size);
     }
-}
+  }
 

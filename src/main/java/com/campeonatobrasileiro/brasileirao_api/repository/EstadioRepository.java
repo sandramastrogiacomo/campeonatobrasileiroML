@@ -13,7 +13,9 @@ import java.util.Optional;
 public interface EstadioRepository extends JpaRepository<EstadioEntity, Long> {
 
     Optional<EstadioEntity> findByNomeIgnoreCase(String nome);
+
     Page<EstadioEntity>findAll(Pageable pageable);
+    Page<EstadioEntity> findByCidadeContainingIgnoreCase(String cidade, Pageable pageable);
 
 }
 

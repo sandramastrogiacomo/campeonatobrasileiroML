@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +36,6 @@ public class ClubeServiceTest {
 
     @BeforeEach
     public void setUp() {
-        clubeRepository = mock(ClubeRepository.class);
         clubeService = new ClubeService(clubeRepository);
 
         clubeEntity = new ClubeEntity();

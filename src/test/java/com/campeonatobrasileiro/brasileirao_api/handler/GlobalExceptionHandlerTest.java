@@ -1,7 +1,8 @@
-package com.campeonatobrasileiro.brasileirao_api.service;
+package com.campeonatobrasileiro.brasileirao_api.handler;
 
 import com.campeonatobrasileiro.brasileirao_api.controller.ClubeController;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.service.ClubeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

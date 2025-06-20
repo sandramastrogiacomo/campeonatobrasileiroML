@@ -1,5 +1,6 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.PartidaRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.PartidaResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubeEntity;
@@ -8,6 +9,8 @@ import com.campeonatobrasileiro.brasileirao_api.entity.PartidaEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubeRepository;
 import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
 import com.campeonatobrasileiro.brasileirao_api.repository.PartidaRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -211,6 +214,17 @@ public class PartidaServiceTest {
          Mockito.verify(partidaRepository).findByEstadioId(3L, pageable);
 
      }
+
+     @Test
+    void buscarPartidaporIdDeveLancarExcecao(){
+      Mockito.when(partidaRepository.findById(999L)).thenReturn(Optional.empty());
+
+         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+             partidaService.buscarPorId(999L);
+         });
+
+         assertEquals("Partida inexistente!", exception.getMessage());
+    }
 
 
     }

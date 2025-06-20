@@ -18,10 +18,10 @@ public class ClubeEntity {
 
     private boolean ativo = true;
 
-    @OneToMany (mappedBy = "ClubeMandante", fetch = FetchType.LAZY)
+    @OneToMany (mappedBy = "clubeMandante", fetch = FetchType.LAZY)
     private List<PartidaEntity> partidasComoMandante;
 
-    @OneToMany(mappedBy = "ClubeVisitante", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clubeVisitante", fetch = FetchType.LAZY)
     private List<PartidaEntity> partidasComoVisitante;
 
 

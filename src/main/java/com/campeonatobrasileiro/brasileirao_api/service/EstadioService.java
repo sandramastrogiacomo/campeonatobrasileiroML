@@ -65,6 +65,15 @@ public class EstadioService {
         return estadios.map(this:: toRespostaDTO);
     }
 
+    public Page<EstadioResponseDTO> listar(Pageable pageable) {
+        return estadioRepository.findAll(pageable).map(this::toRespostaDTO);
+    }
+
+    public Page<EstadioResponseDTO> listarPorCidade(String cidade, Pageable pageable) {
+        Page<EstadioEntity> page = estadioRepository.findByCidadeContainingIgnoreCase(cidade, pageable);
+        return  page.map(this::toRespostaDTO);
+    }
+
     private EstadioResponseDTO toRespostaDTO(EstadioEntity estadioEntity) {
         return new EstadioResponseDTO(
                 estadioEntity.getId(),
@@ -73,7 +82,5 @@ public class EstadioService {
                 estadioEntity.getCapacidade());
     }
 
-    public Page<EstadioResponseDTO> listar(Pageable pageable) {
-        return estadioRepository.findAll(pageable).map(this::toRespostaDTO);
-    }
+
 }
