@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping ("/clubes")
 public class ClubeController {
@@ -35,6 +37,12 @@ public class ClubeController {
     @GetMapping("/{id}")
     public ClubeResponseDTO buscarPorId(@PathVariable Long id) {
         return clubeService.buscarPorId(id);
+    }
+
+    @GetMapping("/nome/{nome}")
+    public List<ClubeResponseDTO> buscarPorNome(@PathVariable String nome) {
+        return clubeService.buscarPorNome(nome);
+
     }
 
     @GetMapping

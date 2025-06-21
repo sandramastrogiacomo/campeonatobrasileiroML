@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ClubeRepository extends JpaRepository<ClubeEntity, Long> {
 
@@ -19,4 +21,7 @@ public interface ClubeRepository extends JpaRepository<ClubeEntity, Long> {
                                        @Param("estado") String estado,
                                        @Param("ativo") Boolean ativo,
                                        Pageable pageable);
+
+    List<ClubeEntity> buscarPorNome(@Param("nome") String nome);
 }
+

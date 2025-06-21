@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ClubeService {
 
@@ -24,7 +27,7 @@ public class ClubeService {
         ClubeEntity clubeEntity = new ClubeEntity();
 
         clubeEntity.setNome(clubeRequestDTO.getNome());
-        clubeEntity.setEstado(clubeRequestDTO.getEstado(""));
+        clubeEntity.setEstado(clubeRequestDTO.getEstado());
         clubeEntity.setAtivo(true);
 
         clubeEntity = clubeRepository.save(clubeEntity);
@@ -37,7 +40,7 @@ public class ClubeService {
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado!"));
 
         clubeEntity.setNome(clubeRequestDTO.getNome());
-        clubeEntity.setEstado(clubeRequestDTO.getEstado(""));
+        clubeEntity.setEstado(clubeRequestDTO.getEstado());
 
         clubeEntity = clubeRepository.save(clubeEntity);
         return toRespostaDTO(clubeEntity);
@@ -71,5 +74,10 @@ public class ClubeService {
                 clubeEntity.getNome(),
                 clubeEntity.getEstado(),
                 clubeEntity.isAtivo());
+    }
+
+    public List<ClubeResponseDTO> buscarPorNome(String nome) {
+        List<ClubeEntity> clubes = clubeRepository.buscarPorNome(nome);
+        return clubes.stream().map(this::toRespostaDTO).collect(Collectors.toList());
     }
 }

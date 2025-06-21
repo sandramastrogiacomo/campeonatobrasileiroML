@@ -30,7 +30,7 @@ public class ClubeRequestDTO {
         this.nome = nome;
     }
 
-    public String getEstado(String s) {
+    public String getEstado() {
         return estado;
     }
 
