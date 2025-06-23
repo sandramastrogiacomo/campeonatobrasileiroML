@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class EstadioController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public EstadioResponseDTO cadastrarEstadio (@Valid @RequestBody EstadioRequestDTO estadioRequestDTO) {
         return estadioService.cadastrarEstadio(estadioRequestDTO);
     }
@@ -45,17 +47,16 @@ public class EstadioController {
     @GetMapping("/buscar-por-cidade")
     public Page<EstadioResponseDTO> buscarPorCidade (
         @RequestParam String cidade,
-        @RequestParam int pagina,
-        @RequestParam int capacidade) {
+        @RequestParam int page,
+        @RequestParam int size) {
 
-        Pageable pageable = PageRequest.of(pagina,capacidade);
-        return estadioService.listarPorCidade(cidade, pageable);
+        return estadioService.listarPorCidade(cidade, PageRequest.of(page, size));
         }
 
     @GetMapping
     public Page<EstadioResponseDTO> listarEstadios(@RequestParam(defaultValue = "0" )int page,
-                                                   @RequestParam (defaultValue = "10") int size) {
-        return estadioService.listar(page, size);
+                                                   @RequestParam (defaultValue = "10") int size, Pageable pageable) {
+        return estadioService.listar(pageable);
     }
   }
 
