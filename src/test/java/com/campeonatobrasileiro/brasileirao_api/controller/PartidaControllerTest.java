@@ -63,10 +63,9 @@ public class PartidaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(partidaRequestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Allianz Park"))
-                .andExpect(jsonPath("$.clubeMandanteId").value(1))
-                .andExpect(jsonPath("$.clubeVisitanteId").value(2))
-                .andExpect(jsonPath("$.estadioId").value(1))
+                .andExpect(jsonPath("$.estadio").value("Allianz Park"))
+                .andExpect(jsonPath("$.clubeMandante").value("Palmeiras"))
+                .andExpect(jsonPath("$.clubeVisitante").value("Flamengo"))
                 .andExpect(jsonPath("$.golsMandante").value(2))
                 .andExpect(jsonPath("$.golsVisitante").value(1));
 
@@ -91,10 +90,9 @@ public class PartidaControllerTest {
                 .param("page", "0")
                 .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome").value("Allianz Park"))
-                .andExpect(jsonPath("$.content[0].clubeMandanteId").value(1))
-                .andExpect(jsonPath("$.content[0].clubeVisitanteId").value(2))
-                .andExpect(jsonPath("$.content[0].estadioId").value(1))
+                .andExpect(jsonPath("$.content[0].estadio").value("Allianz Park"))
+                .andExpect(jsonPath("$.content[0].clubeMandante").value("Palmeiras"))
+                .andExpect(jsonPath("$.content[0].clubeVisitante").value("Flamengo"))
                 .andExpect(jsonPath("$.content[0].golsMandante").value(2))
                 .andExpect(jsonPath("$.content[0].golsVisitante").value(1));
     }
@@ -114,10 +112,9 @@ public class PartidaControllerTest {
 
         mockMvc.perform(get("/partidas/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Allianz Park"))
-                .andExpect(jsonPath("$.clubeMandanteId").value(1))
-                .andExpect(jsonPath("$.clubeVisitanteId").value(2))
-                .andExpect(jsonPath("$.estadioId").value(1))
+                .andExpect(jsonPath("$.estadio").value("Allianz Park"))
+                .andExpect(jsonPath("$.clubeMandante").value("Palmeiras"))
+                .andExpect(jsonPath("$.clubeVisitante").value("Flamengo"))
                 .andExpect(jsonPath("$.golsMandante").value(2))
                 .andExpect(jsonPath("$.golsVisitante").value(1));
     }
@@ -136,11 +133,11 @@ public class PartidaControllerTest {
 
         Mockito.when(partidaService.listarPorEstadio(Mockito.eq(1L),any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/partidas/estadios/1")
+        mockMvc.perform(get("/partidas/estadio/1")
                 .param("page","0")
                 .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].nome").value("Allianz Park"));
+                .andExpect(jsonPath("$.content[0].estadio").value("Allianz Park"));
     }
 
     @Test
