@@ -22,6 +22,6 @@ public interface ClubeRepository extends JpaRepository<ClubeEntity, Long> {
                                        @Param("ativo") Boolean ativo,
                                        Pageable pageable);
 
-    List<ClubeEntity> buscarPorNome(@Param("nome") String nome);
+    List<ClubeEntity> findByNome(@Param("nome") String nome);
 }
 

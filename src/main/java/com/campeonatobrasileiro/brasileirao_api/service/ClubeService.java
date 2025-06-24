@@ -77,7 +77,7 @@ public class ClubeService {
     }
 
     public List<ClubeResponseDTO> buscarPorNome(String nome) {
-        List<ClubeEntity> clubes = clubeRepository.buscarPorNome(nome);
+        List<ClubeEntity> clubes = clubeRepository.findByNome(nome);
         return clubes.stream().map(this::toRespostaDTO).collect(Collectors.toList());
     }
 }
