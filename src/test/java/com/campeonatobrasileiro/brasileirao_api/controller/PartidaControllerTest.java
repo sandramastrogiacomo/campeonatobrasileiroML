@@ -1,7 +1,7 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.PartidaRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.PartidaResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.MatchRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.PartidaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -40,28 +40,28 @@ public class PartidaControllerTest {
     @Test
     void deveCadastrarPartidaComSucesso() throws Exception {
 
-        PartidaRequestDTO partidaRequestDTO = new PartidaRequestDTO();
-        partidaRequestDTO.setDataHora(LocalDateTime.now().plusDays(1));
-        partidaRequestDTO.setClubeMandanteId(1L);
-        partidaRequestDTO.setClubeVisitanteId(2L);
-        partidaRequestDTO.setEstadioId(1L);
-        partidaRequestDTO.setGolsMandante(2);
-        partidaRequestDTO.setGolsVisitante(1);
+        MatchRequestDTO matchRequestDTO = new MatchRequestDTO();
+        matchRequestDTO.setDataHora(LocalDateTime.now().plusDays(1));
+        matchRequestDTO.setClubeMandanteId(1L);
+        matchRequestDTO.setClubeVisitanteId(2L);
+        matchRequestDTO.setEstadioId(1L);
+        matchRequestDTO.setGolsMandante(2);
+        matchRequestDTO.setGolsVisitante(1);
 
-        PartidaResponseDTO partidaResponseDTO = new PartidaResponseDTO(
+        MatchResponseDTO matchResponseDTO = new MatchResponseDTO(
                 1L,
-                partidaRequestDTO.getDataHora(),
+                matchRequestDTO.getDataHora(),
                 "Palmeiras",
                 "Flamengo",
                 "Allianz Park",
                 2,
                 1);
 
-        Mockito.when(partidaService.cadastrarPartida(any())).thenReturn(partidaResponseDTO);
+        Mockito.when(partidaService.cadastrarPartida(any())).thenReturn(matchResponseDTO);
 
         mockMvc.perform(post("/partidas")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(partidaRequestDTO)))
+                .content(objectMapper.writeValueAsString(matchRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estadio").value("Allianz Park"))
                 .andExpect(jsonPath("$.clubeMandante").value("Palmeiras"))
@@ -73,7 +73,7 @@ public class PartidaControllerTest {
 
     @Test
     void deveListarPartidasComSucesso() throws Exception {
-        PartidaResponseDTO partidaResponseDTO = new PartidaResponseDTO(
+        MatchResponseDTO matchResponseDTO = new MatchResponseDTO(
                 1L,
                 LocalDateTime.now(),
                 "Palmeiras",
@@ -82,7 +82,7 @@ public class PartidaControllerTest {
                 2,
                 1);
 
-        PageImpl<PartidaResponseDTO> page = new PageImpl<>(List.of(partidaResponseDTO), PageRequest.of(0, 10), 2);
+        PageImpl<MatchResponseDTO> page = new PageImpl<>(List.of(matchResponseDTO), PageRequest.of(0, 10), 2);
 
         Mockito.when(partidaService.listarPartidas(any(Pageable.class))).thenReturn(page);
 
@@ -99,7 +99,7 @@ public class PartidaControllerTest {
 
     @Test
     void deveBuscarPartidaPorId() throws Exception {
-        PartidaResponseDTO partidaResponseDTO = new PartidaResponseDTO(
+        MatchResponseDTO matchResponseDTO = new MatchResponseDTO(
                 1L,
                 LocalDateTime.now(),
                 "Palmeiras",
@@ -108,7 +108,7 @@ public class PartidaControllerTest {
                 2,
                 1);
 
-        Mockito.when(partidaService.buscarPorId(1L)).thenReturn(partidaResponseDTO);
+        Mockito.when(partidaService.buscarPorId(1L)).thenReturn(matchResponseDTO);
 
         mockMvc.perform(get("/partidas/1"))
                 .andExpect(status().isOk())
@@ -121,7 +121,7 @@ public class PartidaControllerTest {
 
     @Test
     void deveListarPartidaPorEstadio() throws Exception {
-        PartidaResponseDTO partidaResponseDTO = new PartidaResponseDTO(
+        MatchResponseDTO matchResponseDTO = new MatchResponseDTO(
                 1L,
                 LocalDateTime.now().plusDays(1),
                 "Palmeiras",
@@ -129,7 +129,7 @@ public class PartidaControllerTest {
                 "Allianz Park",
                 2,
                 1);
-        PageImpl<PartidaResponseDTO> page = new PageImpl<>(List.of(partidaResponseDTO), PageRequest.of(0, 10), 2);
+        PageImpl<MatchResponseDTO> page = new PageImpl<>(List.of(matchResponseDTO), PageRequest.of(0, 10), 2);
 
         Mockito.when(partidaService.listarPorEstadio(Mockito.eq(1L),any(Pageable.class))).thenReturn(page);
 

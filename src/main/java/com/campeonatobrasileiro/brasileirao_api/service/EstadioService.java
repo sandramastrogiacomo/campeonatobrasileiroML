@@ -1,7 +1,7 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.StadiumRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.StadiumResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,57 +25,57 @@ public class EstadioService {
         this.estadioRepository = estadioRepository;
     }
 
-    public EstadioResponseDTO cadastrarEstadio(EstadioRequestDTO estadioRequestDTO) {
+    public StadiumResponseDTO cadastrarEstadio(StadiumRequestDTO stadiumRequestDTO) {
         EstadioEntity estadioEntity = new EstadioEntity();
 
-        estadioEntity.setNome(estadioRequestDTO.getNome());
-        estadioEntity.setCapacidade(estadioRequestDTO.getCapacidade());
-        estadioEntity.setCidade(estadioRequestDTO.getCidade());
+        estadioEntity.setNome(stadiumRequestDTO.getNome());
+        estadioEntity.setCapacidade(stadiumRequestDTO.getCapacidade());
+        estadioEntity.setCidade(stadiumRequestDTO.getCidade());
 
         estadioEntity = estadioRepository.save(estadioEntity);
         return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioResponseDTO atualizarEstadio(Long id, EstadioRequestDTO estadioRequestDTO) {
+    public StadiumResponseDTO atualizarEstadio(Long id, StadiumRequestDTO stadiumRequestDTO) {
         EstadioEntity estadioEntity = estadioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
-        estadioEntity.setNome(estadioRequestDTO.getNome());
+        estadioEntity.setNome(stadiumRequestDTO.getNome());
         estadioEntity.setCapacidade(estadioEntity.getCapacidade());
-        estadioEntity.setCidade(estadioRequestDTO.getCidade());
+        estadioEntity.setCidade(stadiumRequestDTO.getCidade());
 
         estadioEntity = estadioRepository.save(estadioEntity);
         return toRespostaDTO(estadioEntity);
     }
 
-    public EstadioResponseDTO buscarPorId (Long id) {
+    public StadiumResponseDTO buscarPorId (Long id) {
         EstadioEntity estadioEntity = estadioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
         return toRespostaDTO(estadioEntity);
     }
 
-    public List<EstadioResponseDTO> buscarPorNome (String nome) {
+    public List<StadiumResponseDTO> buscarPorNome (String nome) {
         Optional<EstadioEntity> entidades = estadioRepository.findByNomeIgnoreCase(nome);
         return entidades.stream().map(this::toRespostaDTO).toList();
     }
 
-    public Page<EstadioResponseDTO>listar(int page, int size) {
+    public Page<StadiumResponseDTO>listar(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
         Page<EstadioEntity> estadios = estadioRepository.findAll(pageable);
         return estadios.map(this:: toRespostaDTO);
     }
 
-    public Page<EstadioResponseDTO> listar(Pageable pageable) {
+    public Page<StadiumResponseDTO> listar(Pageable pageable) {
         return estadioRepository.findAll(pageable).map(this::toRespostaDTO);
     }
 
-    public Page<EstadioResponseDTO> listarPorCidade(String cidade, Pageable pageable) {
+    public Page<StadiumResponseDTO> listarPorCidade(String cidade, Pageable pageable) {
         Page<EstadioEntity> page = estadioRepository.findByCidadeContainingIgnoreCase(cidade, pageable);
         return  page.map(this::toRespostaDTO);
     }
 
-    private EstadioResponseDTO toRespostaDTO(EstadioEntity estadioEntity) {
-        return new EstadioResponseDTO(
+    private StadiumResponseDTO toRespostaDTO(EstadioEntity estadioEntity) {
+        return new StadiumResponseDTO(
                 estadioEntity.getId(),
                 estadioEntity.getNome(),
                 estadioEntity.getCidade(),

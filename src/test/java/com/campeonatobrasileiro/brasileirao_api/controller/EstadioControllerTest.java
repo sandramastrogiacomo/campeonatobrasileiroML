@@ -1,7 +1,7 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.EstadioResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.StadiumRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.StadiumResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.EstadioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@WebMvcTest(EstadioController.class)
+@WebMvcTest(StadiumController.class)
 public class EstadioControllerTest {
 
     @Autowired
@@ -38,18 +38,18 @@ public class EstadioControllerTest {
 
    @Test
         void deveCadastrarEstadioComSucesso() throws Exception {
-            EstadioRequestDTO estadioRequestDTO = new EstadioRequestDTO();
-            estadioRequestDTO.setNome("Allianz Park");
-            estadioRequestDTO.setCidade("São Paulo");
-            estadioRequestDTO.setCapacidade(500000);
+            StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
+            stadiumRequestDTO.setNome("Allianz Park");
+            stadiumRequestDTO.setCidade("São Paulo");
+            stadiumRequestDTO.setCapacidade(500000);
 
-            EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Allianz Park", "São Paulo", 50000);
+            StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Allianz Park", "São Paulo", 50000);
 
-            Mockito.when(estadioService.cadastrarEstadio(Mockito.any())).thenReturn(estadioResponseDTO);
+            Mockito.when(estadioService.cadastrarEstadio(Mockito.any())).thenReturn(stadiumResponseDTO);
 
             mockMvc.perform(post("/estadios")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(estadioRequestDTO)))
+                        .content(objectMapper.writeValueAsString(stadiumRequestDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.nome").value("Allianz Park"))
@@ -59,8 +59,8 @@ public class EstadioControllerTest {
 
     @Test
     void deveBuscarEstadioPorIdComSucesso() throws Exception {
-        EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
-        Mockito.when(estadioService.buscarPorId(1L)).thenReturn(estadioResponseDTO);
+        StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
+        Mockito.when(estadioService.buscarPorId(1L)).thenReturn(stadiumResponseDTO);
 
         mockMvc.perform(get("/estadios/1"))
                 .andExpect(status().isOk())
@@ -72,18 +72,18 @@ public class EstadioControllerTest {
 
     @Test
     void deveAtualizarEstadioComSucesso() throws Exception {
-        EstadioRequestDTO estadioRequestDTO = new EstadioRequestDTO();
-        estadioRequestDTO.setNome("Allianz Park");
-        estadioRequestDTO.setCidade("São Paulo");
-        estadioRequestDTO.setCapacidade(50000);
+        StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
+        stadiumRequestDTO.setNome("Allianz Park");
+        stadiumRequestDTO.setCidade("São Paulo");
+        stadiumRequestDTO.setCapacidade(50000);
 
-        EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Neo Quimica Arena", "São Paulo", 50000);
+        StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Neo Quimica Arena", "São Paulo", 50000);
 
-        Mockito.when(estadioService.atualizarEstadio(eq(1L), any())).thenReturn(estadioResponseDTO);
+        Mockito.when(estadioService.atualizarEstadio(eq(1L), any())).thenReturn(stadiumResponseDTO);
 
         mockMvc.perform(put("/estadios/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(estadioRequestDTO)))
+                        .content(objectMapper.writeValueAsString(stadiumRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.nome").value("Neo Quimica Arena"))
@@ -94,8 +94,8 @@ public class EstadioControllerTest {
 
     @Test
     void deveListarEstadiosComPaginacaoComSucesso() throws Exception {
-        EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
-        PageImpl<EstadioResponseDTO> page = new PageImpl<>(List.of(estadioResponseDTO), PageRequest.of(0, 10), 1);
+        StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
+        PageImpl<StadiumResponseDTO> page = new PageImpl<>(List.of(stadiumResponseDTO), PageRequest.of(0, 10), 1);
 
         Mockito.when(estadioService.listar(any(Pageable.class))).thenReturn(page);
 
@@ -111,8 +111,8 @@ public class EstadioControllerTest {
     }
         @Test
         void deveBuscarEstadioPorCidadeComSucesso() throws Exception {
-            EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
-            PageImpl<EstadioResponseDTO> page = new PageImpl<>(List.of(estadioResponseDTO), PageRequest.of(0, 10), 1);
+            StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
+            PageImpl<StadiumResponseDTO> page = new PageImpl<>(List.of(stadiumResponseDTO), PageRequest.of(0, 10), 1);
 
             Mockito.when(estadioService.listarPorCidade((eq("Rio de Janeiro")),any(Pageable.class))).thenReturn(page);
 
@@ -129,9 +129,9 @@ public class EstadioControllerTest {
 
             @Test
             void deveBuscarEstadioPorNomeComSucesso () throws Exception {
-                EstadioResponseDTO estadioResponseDTO = new EstadioResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
+                StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
 
-                Mockito.when(estadioService.buscarPorNome("Maracanã")).thenReturn(List.of(estadioResponseDTO));
+                Mockito.when(estadioService.buscarPorNome("Maracanã")).thenReturn(List.of(stadiumResponseDTO));
 
                 mockMvc.perform(get("/estadios/nome/Maracanã"))
                         .andExpect(status().isOk())

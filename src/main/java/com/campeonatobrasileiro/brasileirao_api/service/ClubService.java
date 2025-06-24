@@ -1,9 +1,9 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.entity.ClubeEntity;
-import com.campeonatobrasileiro.brasileirao_api.repository.ClubeRepository;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
+import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ClubeService {
+public class ClubService {
 
-    private final ClubeRepository clubeRepository;
+    private final ClubRepository clubeRepository;
 
-    public ClubeService(ClubeRepository clubeRepository) {
+    public ClubService(ClubRepository clubeRepository) {
     this.clubeRepository = clubeRepository;
     }
 
-    public ClubeResponseDTO cadastrarClube(ClubeRequestDTO clubeRequestDTO) {
-        ClubeEntity clubeEntity = new ClubeEntity();
+    public ClubResponseDTO cadastrarClube(ClubRequestDTO clubeRequestDTO) {
+        ClubEntity clubeEntity = new ClubEntity();
 
         clubeEntity.setNome(clubeRequestDTO.getNome());
         clubeEntity.setEstado(clubeRequestDTO.getEstado());
@@ -35,8 +35,8 @@ public class ClubeService {
 
     }
 
-    public ClubeResponseDTO atualizarClube(Long id, ClubeRequestDTO clubeRequestDTO) {
-        ClubeEntity clubeEntity = clubeRepository.findById(id)
+    public ClubResponseDTO atualizarClube(Long id, ClubRequestDTO clubeRequestDTO) {
+        ClubEntity clubeEntity = clubeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado!"));
 
         clubeEntity.setNome(clubeRequestDTO.getNome());
@@ -47,37 +47,37 @@ public class ClubeService {
     }
 
     public void inativarClube(Long id) {
-        ClubeEntity clubeEntity = clubeRepository.findById(id)
+        ClubEntity clubeEntity = clubeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado!"));
 
         clubeEntity.setAtivo(false);
         clubeRepository.save(clubeEntity);
     }
 
-    public ClubeResponseDTO buscarPorId(Long id) {
-        ClubeEntity clubeEntity = clubeRepository.findById(id)
+    public ClubResponseDTO buscarPorId(Long id) {
+        ClubEntity clubeEntity = clubeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado! "));
         return toRespostaDTO(clubeEntity);
     }
 
-    public Page<ClubeResponseDTO> listar(String nome, String estado, Boolean ativo, int page, int size) {
+    public Page<ClubResponseDTO> listar(String nome, String estado, Boolean ativo, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
 
-        Page<ClubeEntity> clubes = clubeRepository.buscarComFiltros(nome,estado,ativo, pageable);
+        Page<ClubEntity> clubes = clubeRepository.buscarComFiltros(nome,estado,ativo, pageable);
 
        return clubes.map(this::toRespostaDTO);
     }
 
-    private ClubeResponseDTO toRespostaDTO(ClubeEntity clubeEntity) {
-        return new ClubeResponseDTO(
+    private ClubResponseDTO toRespostaDTO(ClubEntity clubeEntity) {
+        return new ClubResponseDTO(
                 clubeEntity.getId(),
                 clubeEntity.getNome(),
                 clubeEntity.getEstado(),
                 clubeEntity.isAtivo());
     }
 
-    public List<ClubeResponseDTO> buscarPorNome(String nome) {
-        List<ClubeEntity> clubes = clubeRepository.findByNome(nome);
+    public List<ClubResponseDTO> buscarPorNome(String nome) {
+        List<ClubEntity> clubes = clubeRepository.findByNome(nome);
         return clubes.stream().map(this::toRespostaDTO).collect(Collectors.toList());
     }
 }

@@ -16,11 +16,11 @@ public class PartidaEntity {
 
     @ManyToOne (fetch =  FetchType.LAZY)
     @JoinColumn(name = "clube_mandante_id", nullable = false)
-    private ClubeEntity clubeMandante;
+    private ClubEntity clubeMandante;
 
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "clube_visitante_id", nullable = false)
-    private ClubeEntity clubeVisitante;
+    private ClubEntity clubeVisitante;
 
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "estadio_id",nullable = false)
@@ -32,7 +32,7 @@ public class PartidaEntity {
     public PartidaEntity() {
     }
 
-    public PartidaEntity(Long id, LocalDateTime dataHora, ClubeEntity clubeMandante, ClubeEntity clubeVisitante, EstadioEntity estadio, Integer golsMandante, Integer golsVisitante) {
+    public PartidaEntity(Long id, LocalDateTime dataHora, ClubEntity clubeMandante, ClubEntity clubeVisitante, EstadioEntity estadio, Integer golsMandante, Integer golsVisitante) {
         this.id = id;
         this.dataHora = dataHora;
         this.clubeMandante = clubeMandante;
@@ -58,19 +58,19 @@ public class PartidaEntity {
         this.dataHora = dataHora;
     }
 
-    public ClubeEntity getClubeMandante() {
+    public ClubEntity getClubeMandante() {
         return clubeMandante;
     }
 
-    public void setClubeMandante(ClubeEntity clubeMandante) {
+    public void setClubeMandante(ClubEntity clubeMandante) {
         this.clubeMandante = clubeMandante;
     }
 
-    public ClubeEntity getClubeVisitante() {
+    public ClubEntity getClubeVisitante() {
         return clubeVisitante;
     }
 
-    public void setClubeVisitante(ClubeEntity clubeVisitante) {
+    public void setClubeVisitante(ClubEntity clubeVisitante) {
         this.clubeVisitante = clubeVisitante;
     }
 

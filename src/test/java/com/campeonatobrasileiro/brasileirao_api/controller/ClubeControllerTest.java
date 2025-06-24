@@ -1,8 +1,8 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.service.ClubeService;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -22,22 +22,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@WebMvcTest(ClubeController.class)
+@WebMvcTest(ClubController.class)
 public class ClubeControllerTest {
 
    @Autowired
     private MockMvc mockMvc;
 
    @MockBean
-    private ClubeService clubeService;
+    private ClubService clubeService;
 
    @Autowired
     private ObjectMapper objectMapper;
 
    @Test
    void deveCadastrarClubeComSucesso() throws Exception {
-       ClubeRequestDTO clubeRequestDTO = new ClubeRequestDTO("Palmeiras", "SP");
-       ClubeResponseDTO clubeResponseDTO = new ClubeResponseDTO(1L, "Palmeiras", "SP", true);
+       ClubRequestDTO clubeRequestDTO = new ClubRequestDTO("Palmeiras", "SP");
+       ClubResponseDTO clubeResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true);
 
        Mockito.when(clubeService.cadastrarClube(any())).thenReturn(clubeResponseDTO);
 
@@ -51,7 +51,7 @@ public class ClubeControllerTest {
    }
     @Test
     void deveBuscarClubePorIdComSucesso() throws Exception {
-       ClubeResponseDTO clubeResponseDTO = new ClubeResponseDTO(1L, "Palmeiras", "SP", true);
+       ClubResponseDTO clubeResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true);
 
        Mockito.when(clubeService.buscarPorId(1L)).thenReturn(clubeResponseDTO);
 
@@ -65,8 +65,8 @@ public class ClubeControllerTest {
     void deveBuscarClubePorNomeComSucesso() throws Exception {
        String nome = "Palmeiras";
 
-       ClubeResponseDTO  clubeResponseDTO= new ClubeResponseDTO(1L, "Palmeiras", "SP", true);
-        List<ClubeResponseDTO> lista = List.of(clubeResponseDTO);
+       ClubResponseDTO clubeResponseDTO= new ClubResponseDTO(1L, "Palmeiras", "SP", true);
+        List<ClubResponseDTO> lista = List.of(clubeResponseDTO);
 
         Mockito.when(clubeService.buscarPorNome(nome)).thenReturn(lista);
 
@@ -80,8 +80,8 @@ public class ClubeControllerTest {
     }
    @Test
     void deveAtualizarClubeComSucesso() throws Exception {
-       ClubeRequestDTO clubeRequestDTO = new ClubeRequestDTO("Sociedade Esportiva Palmeiras", "SP");
-       ClubeResponseDTO clubeResponseDTO = new ClubeResponseDTO(1L, "Sociedade Esportiva Palmeiras", "SP", true);
+       ClubRequestDTO clubeRequestDTO = new ClubRequestDTO("Sociedade Esportiva Palmeiras", "SP");
+       ClubResponseDTO clubeResponseDTO = new ClubResponseDTO(1L, "Sociedade Esportiva Palmeiras", "SP", true);
 
        Mockito.when(clubeService.atualizarClube(eq(1L), any())).thenReturn(clubeResponseDTO);
 
@@ -101,9 +101,9 @@ public class ClubeControllerTest {
    }
    @Test
     void deveListarClubeComFiltro() throws Exception {
-       ClubeResponseDTO clubeResponseDTO = new ClubeResponseDTO(1L, "Palmeiras", "SP", true);
+       ClubResponseDTO clubeResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true);
 
-       PageImpl<ClubeResponseDTO> pagina = new PageImpl<>(List.of(clubeResponseDTO));
+       PageImpl<ClubResponseDTO> pagina = new PageImpl<>(List.of(clubeResponseDTO));
 
        Mockito.when(clubeService.listar("Palmeiras", "SP", true,0,10 ))
                .thenReturn(pagina);

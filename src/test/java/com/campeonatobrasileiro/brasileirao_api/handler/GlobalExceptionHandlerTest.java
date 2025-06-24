@@ -1,8 +1,8 @@
 package com.campeonatobrasileiro.brasileirao_api.handler;
 
-import com.campeonatobrasileiro.brasileirao_api.controller.ClubeController;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.service.ClubeService;
+import com.campeonatobrasileiro.brasileirao_api.controller.ClubController;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest (ClubeController.class)
+@WebMvcTest (ClubController.class)
 public class GlobalExceptionHandlerTest {
 
     @Autowired
@@ -28,11 +28,11 @@ public class GlobalExceptionHandlerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ClubeService clubeService;
+    private ClubService clubeService;
 
     @Test
     public void deveRetornarErros_quandoDTOInvalido() throws Exception {
-        ClubeRequestDTO clubeInvalido = new ClubeRequestDTO();
+        ClubRequestDTO clubeInvalido = new ClubRequestDTO();
         clubeInvalido.setNome("A");
         clubeInvalido.setEstado("");
 

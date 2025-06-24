@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table (name = "clubes")
-public class ClubeEntity {
+public class ClubEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +25,10 @@ public class ClubeEntity {
     private List<PartidaEntity> partidasComoVisitante;
 
 
-    public ClubeEntity() {
+    public ClubEntity() {
     }
 
-    public ClubeEntity(Long id, String nome, String estado, boolean ativo) {
+    public ClubEntity(Long id, String nome, String estado, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.estado = estado;

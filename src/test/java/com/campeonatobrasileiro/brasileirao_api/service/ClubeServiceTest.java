@@ -1,9 +1,9 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.entity.ClubeEntity;
-import com.campeonatobrasileiro.brasileirao_api.repository.ClubeRepository;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
+import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,25 +26,25 @@ import static org.mockito.Mockito.when;
 public class ClubeServiceTest {
 
     @Mock
-    private ClubeRepository clubeRepository;
+    private ClubRepository clubeRepository;
 
     @InjectMocks
-    private ClubeService clubeService;
+    private ClubService clubeService;
 
-    private ClubeEntity clubeEntity;
-    private ClubeResponseDTO clubeResponseDTO;
+    private ClubEntity clubeEntity;
+    private ClubResponseDTO clubeResponseDTO;
 
     @BeforeEach
     public void setUp() {
-        clubeService = new ClubeService(clubeRepository);
+        clubeService = new ClubService(clubeRepository);
 
-        clubeEntity = new ClubeEntity();
-        clubeResponseDTO = new ClubeResponseDTO();
+        clubeEntity = new ClubEntity();
+        clubeResponseDTO = new ClubResponseDTO();
     }
 
     @Test
     public void buscarPorId() {
-        ClubeEntity clubeEntity1 = new ClubeEntity();
+        ClubEntity clubeEntity1 = new ClubEntity();
         clubeEntity.setId(1L);
         clubeEntity.setNome("Palmeiras");
         clubeEntity.setEstado("SP");
@@ -52,7 +52,7 @@ public class ClubeServiceTest {
 
         when(clubeRepository.findById(1L)).thenReturn(Optional.of(clubeEntity));
 
-        ClubeResponseDTO resposta = clubeService.buscarPorId(1L);
+        ClubResponseDTO resposta = clubeService.buscarPorId(1L);
 
         assertEquals("Palmeiras", resposta.getNome());
         assertEquals("SP", resposta.getEstado());
@@ -62,47 +62,47 @@ public class ClubeServiceTest {
     @Test
     public void cadastrarClube() {
 
-        ClubeRequestDTO clubeRequestDTO = new ClubeRequestDTO("Palmeiras", "SP");
-        ClubeEntity clubeEntity1 = new ClubeEntity(1L, "Palmeiras", "SP", true);
+        ClubRequestDTO clubeRequestDTO = new ClubRequestDTO("Palmeiras", "SP");
+        ClubEntity clubeEntity1 = new ClubEntity(1L, "Palmeiras", "SP", true);
 
-        when(clubeRepository.save(any(ClubeEntity.class))).thenReturn(clubeEntity1);
+        when(clubeRepository.save(any(ClubEntity.class))).thenReturn(clubeEntity1);
 
-        ClubeResponseDTO resposta = clubeService.cadastrarClube(clubeRequestDTO);
+        ClubResponseDTO resposta = clubeService.cadastrarClube(clubeRequestDTO);
 
         assertNotNull(resposta);
         assertEquals("Palmeiras", resposta.getNome());
-        verify(clubeRepository, times(1)).save(any(ClubeEntity.class));
+        verify(clubeRepository, times(1)).save(any(ClubEntity.class));
 
     }
 
     @Test
     public void atualizarClube() {
-        ClubeRequestDTO clubeRequestDTO = new ClubeRequestDTO("Sociedade Esportiva Palmeiras", "SP");
-        ClubeEntity entityExistente = new ClubeEntity(1L, "Palmeiras", "SP", true);
+        ClubRequestDTO clubeRequestDTO = new ClubRequestDTO("Sociedade Esportiva Palmeiras", "SP");
+        ClubEntity entityExistente = new ClubEntity(1L, "Palmeiras", "SP", true);
 
         when(clubeRepository.findById(1L)).thenReturn(Optional.of(entityExistente));
-        when(clubeRepository.save(any(ClubeEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        ClubeResponseDTO resposta = clubeService.atualizarClube(1L, clubeRequestDTO);
+        when(clubeRepository.save(any(ClubEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        ClubResponseDTO resposta = clubeService.atualizarClube(1L, clubeRequestDTO);
         assertNotNull(resposta);
         assertEquals("Sociedade Esportiva Palmeiras", resposta.getNome());
         assertEquals("SP", resposta.getEstado());
         assertEquals(1L, resposta.getId());
 
         verify(clubeRepository, times(1)).findById(1L);
-        verify(clubeRepository, times(1)).save(any(ClubeEntity.class));
+        verify(clubeRepository, times(1)).save(any(ClubEntity.class));
 
     }
 
     @Test
     public void inativarClube() {
-        ClubeEntity clubeExistente = new ClubeEntity(1L, "Palmeiras", "SP", true);
+        ClubEntity clubeExistente = new ClubEntity(1L, "Palmeiras", "SP", true);
 
         when(clubeRepository.findById(1L)).thenReturn(Optional.of(clubeExistente));
-        when(clubeRepository.save(any(ClubeEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(clubeRepository.save(any(ClubEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
         clubeService.inativarClube(1L);
         assertFalse(clubeExistente.isAtivo());
         verify(clubeRepository, times(1)).findById(1L);
-        verify(clubeRepository, times(1)).save(any(ClubeEntity.class));
+        verify(clubeRepository, times(1)).save(any(ClubEntity.class));
 
     }
 
@@ -112,16 +112,16 @@ public class ClubeServiceTest {
         String estado = "SP";
         Pageable pageable = PageRequest.of(0, 10);
 
-        ClubeEntity clube1 = new ClubeEntity(1L, "Palmeiras", "SP", true);
-        ClubeEntity clube2 = new ClubeEntity(2L, "Flamengo", "RJ", true);
-        List<ClubeEntity> lista = Arrays.asList(clube1, clube2);
-        Page<ClubeEntity> clubePage = new PageImpl <>(lista);
+        ClubEntity clube1 = new ClubEntity(1L, "Palmeiras", "SP", true);
+        ClubEntity clube2 = new ClubEntity(2L, "Flamengo", "RJ", true);
+        List<ClubEntity> lista = Arrays.asList(clube1, clube2);
+        Page<ClubEntity> clubePage = new PageImpl <>(lista);
 
         when(clubeRepository.buscarComFiltros("","SP",true,
                 PageRequest.of(0, 10, Sort.by("nome").ascending())))
                 .thenReturn(clubePage);
 
-        Page<ClubeResponseDTO> resultado = clubeService.listar("","SP", true, 0,10);
+        Page<ClubResponseDTO> resultado = clubeService.listar("","SP", true, 0,10);
 
         assertEquals(2, resultado.getTotalElements());
         assertEquals("Palmeiras", resultado.getContent().get(0).getNome());
@@ -142,7 +142,7 @@ public class ClubeServiceTest {
     @Test
     public void atualizarClubeLancarExceptionSeIdInvalido() {
         Long idInvalido = 99L;
-                ClubeRequestDTO clubeRequestDTO= new ClubeRequestDTO("Fut fut","MG");
+                ClubRequestDTO clubeRequestDTO= new ClubRequestDTO("Fut fut","MG");
         when(clubeRepository.findById(idInvalido)).thenReturn(Optional.empty());
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             clubeService.atualizarClube(idInvalido, clubeRequestDTO);
