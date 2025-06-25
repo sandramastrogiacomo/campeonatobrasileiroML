@@ -14,79 +14,79 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PartidaService {
+public class MatchService {
 
     private final MatchRepository matchRepository;
-    private final ClubRepository clubeRepository;
+    private final ClubRepository clubRepository;
     private final StadiumRepository stadiumRepository;
 
-    public PartidaService(
+    public MatchService(
             MatchRepository matchRepository,
-            ClubRepository clubeRepository,
+            ClubRepository clubRepository,
             StadiumRepository stadiumRepository) {
         this.matchRepository = matchRepository;
-        this.clubeRepository = clubeRepository;
+        this.clubRepository = clubRepository;
         this.stadiumRepository = stadiumRepository;
     }
 
-    public MatchResponseDTO cadastrarPartida(MatchRequestDTO matchRequestDTO) {
-        ClubEntity clubeMandante = clubeRepository.findById(matchRequestDTO.getClubeMandanteId())
+    public MatchResponseDTO registerMatch(MatchRequestDTO matchRequestDTO) {
+        ClubEntity homeClub = clubRepository.findById(matchRequestDTO.getHomeClubId())
                 .orElseThrow(() -> new EntityNotFoundException("Clube mandante não encontrado!"));
-        ClubEntity clubeVisitante = clubeRepository.findById(matchRequestDTO.getClubeVisitanteId())
+        ClubEntity awayClub = clubRepository.findById(matchRequestDTO.getAwayClubId())
                 .orElseThrow(() -> new EntityNotFoundException("Visitante não encontrado!"));
-       StadiumEntity estadio = stadiumRepository.findById(matchRequestDTO.getEstadioId())
+       StadiumEntity stadium
+               = stadiumRepository.findById(matchRequestDTO.getStadiumId())
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
         MatchEntity matchEntity = new MatchEntity();
-        matchEntity.setDataHora(matchRequestDTO.getDataHora());
-        matchEntity.setClubeMandante(clubeMandante);
-        matchEntity.setClubeVisitante(clubeVisitante);
-        matchEntity.setEstadio(estadio);
-        matchEntity.setGolsMandante(matchRequestDTO.getGolsMandante());
-        matchEntity.setGolsVisitante(matchRequestDTO.getGolsVisitante());
+        matchEntity.setDateTime(matchRequestDTO.getDateTime());
+        matchEntity.setHomeClub(homeClub);
+        matchEntity.setAwayClub(awayClub);
+        matchEntity.setStadium(stadium);
+        matchEntity.setHomeGoals(matchRequestDTO.getHomeGoals());
+        matchEntity.setAwayGoals(matchRequestDTO.getAwayGoals());
 
         return toResponseDTO(matchRepository.save(matchEntity));
 
     }
-         public void deletarPartida(Long Id) {
-        MatchEntity matchEntity = matchRepository.findById(Id)
+         public void deleteMatch(Long id) {
+        MatchEntity matchEntity = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Partida inexistente!"));
         matchRepository.delete(matchEntity);
     }
-         public MatchResponseDTO buscarPorId(Long Id) {
-        MatchEntity matchEntity = matchRepository.findById(Id)
+         public MatchResponseDTO findById(Long id) {
+        MatchEntity matchEntity = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Partida inexistente!"));
         return toResponseDTO(matchEntity);
          }
 
-         public Page<MatchResponseDTO> listarPartidas(Pageable pageable) {
+         public Page<MatchResponseDTO> listMatches(Pageable pageable) {
         return matchRepository.findAll(pageable).map(this::toResponseDTO);
          }
 
-         public Page<MatchResponseDTO> listarPorClubeMandante(Long Id, Pageable pageable) {
-         return matchRepository.findByClubeMandanteId( Id, pageable ).map(this::toResponseDTO);
+         public Page<MatchResponseDTO> listMatchesByHomeClub(Long id, Pageable pageable) {
+         return matchRepository.findByHomeClubId( id, pageable ).map(this::toResponseDTO);
          }
 
-         public Page<MatchResponseDTO> listarPorClubeVisitante(Long Id, Pageable pageable) {
-             return matchRepository.findByClubeVisitanteId(Id, pageable).map(this::toResponseDTO);
+         public Page<MatchResponseDTO> listMatchesByAwayClub(Long id, Pageable pageable) {
+             return matchRepository.findByAwayClubId(id, pageable).map(this::toResponseDTO);
          }
 
-         public Page<MatchResponseDTO> listarPorEstadio(Long Id, Pageable pageable) {
-        return matchRepository.findByEstadioId(Id, pageable).map(this::toResponseDTO);
+         public Page<MatchResponseDTO> listMatchesByStadium(Long id, Pageable pageable) {
+        return matchRepository.findByStadiumId(id, pageable).map(this::toResponseDTO);
          }
 
          private MatchResponseDTO toResponseDTO(MatchEntity matchEntity) {
         return  new MatchResponseDTO(
                 matchEntity.getId(),
-                matchEntity.getDataHora(),
-                matchEntity.getClubeMandante().getNome(),
-                matchEntity.getClubeVisitante().getNome(),
-                matchEntity.getEstadio().getNome(),
-                matchEntity.getGolsMandante(),
-                matchEntity.getGolsVisitante());
-
-
+                matchEntity.getDateTime(),
+                matchEntity.getHomeClub().getName(),
+                matchEntity.getAwayClub().getName(),
+                matchEntity.getStadium().getName(),
+                matchEntity.getHomeGoals(),
+                matchEntity.getAwayGoals());
 
          }
 
 }
+

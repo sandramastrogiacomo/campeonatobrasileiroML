@@ -28,20 +28,20 @@ public class GlobalExceptionHandlerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ClubService clubeService;
+    private ClubService clubService;
 
     @Test
-    public void deveRetornarErros_quandoDTOInvalido() throws Exception {
-        ClubRequestDTO clubeInvalido = new ClubRequestDTO();
-        clubeInvalido.setNome("A");
-        clubeInvalido.setEstado("");
+    public void returnErrorsInvalidDTO() throws Exception {
+        ClubRequestDTO invalidClub = new ClubRequestDTO();
+        invalidClub.setName("A");
+        invalidClub.setState("");
 
-        mockMvc.perform(post("/clubes")
+        mockMvc.perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clubeInvalido)))
+                        .content(objectMapper.writeValueAsString(invalidClub)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0]").exists())
-                .andExpect(jsonPath("$[0]").value(containsString("nome")))
-                .andExpect(jsonPath("$[1]").value(containsString("estado")));
+                .andExpect(jsonPath("$[0]").value(containsString("name")))
+                .andExpect(jsonPath("$[1]").value(containsString("state")));
     }
 }

@@ -28,58 +28,58 @@ public class StadiumService {
     public StadiumResponseDTO registerStadium(StadiumRequestDTO stadiumRequestDTO) {
         StadiumEntity stadiumEntity = new StadiumEntity();
 
-        stadiumEntity.setNome(stadiumRequestDTO.getNome());
-        stadiumEntity.setCapacidade(stadiumRequestDTO.getCapacidade());
-        stadiumEntity.setCidade(stadiumRequestDTO.getCidade());
+        stadiumEntity.setName(stadiumRequestDTO.getName());
+        stadiumEntity.setCapacity(stadiumRequestDTO.getCapacity());
+        stadiumEntity.setCity(stadiumRequestDTO.getCity());
 
         stadiumEntity = stadiumRepository.save(stadiumEntity);
         return toRespostaDTO(stadiumEntity);
     }
 
-    public StadiumResponseDTO atualizarEstadio(Long id, StadiumRequestDTO stadiumRequestDTO) {
+    public StadiumResponseDTO updateStadium(Long id, StadiumRequestDTO stadiumRequestDTO) {
         StadiumEntity stadiumEntity = stadiumRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
-        stadiumEntity.setNome(stadiumRequestDTO.getNome());
-        stadiumEntity.setCapacidade(stadiumEntity.getCapacidade());
-        stadiumEntity.setCidade(stadiumRequestDTO.getCidade());
+        stadiumEntity.setName(stadiumRequestDTO.getName());
+        stadiumEntity.setCapacity(stadiumEntity.getCapacity());
+        stadiumEntity.setCity(stadiumRequestDTO.getCity());
 
         stadiumEntity = stadiumRepository.save(stadiumEntity);
         return toRespostaDTO(stadiumEntity);
     }
 
-    public StadiumResponseDTO buscarPorId (Long id) {
+    public StadiumResponseDTO findById (Long id) {
         StadiumEntity stadiumEntity = stadiumRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
         return toRespostaDTO(stadiumEntity);
     }
 
-    public List<StadiumResponseDTO> buscarPorNome (String nome) {
-        Optional<StadiumEntity> entidades = stadiumRepository.findByNomeIgnoreCase(nome);
-        return entidades.stream().map(this::toRespostaDTO).toList();
+    public List<StadiumResponseDTO> findByName (String name) {
+        Optional<StadiumEntity> entities = stadiumRepository.findByNameIgnoreCase(name);
+        return entities.stream().map(this::toRespostaDTO).toList();
     }
 
-    public Page<StadiumResponseDTO>listar(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("nome").ascending());
-        Page<StadiumEntity> estadios = stadiumRepository.findAll(pageable);
-        return estadios.map(this:: toRespostaDTO);
+    public Page<StadiumResponseDTO>list(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<StadiumEntity>  stadiums = stadiumRepository.findAll(pageable);
+        return stadiums.map(this:: toRespostaDTO);
     }
 
-    public Page<StadiumResponseDTO> listar(Pageable pageable) {
+    public Page<StadiumResponseDTO> list(Pageable pageable) {
         return stadiumRepository.findAll(pageable).map(this::toRespostaDTO);
     }
 
-    public Page<StadiumResponseDTO> listarPorCidade(String cidade, Pageable pageable) {
-        Page<StadiumEntity> page = stadiumRepository.findByCidadeContainingIgnoreCase(cidade, pageable);
+    public Page<StadiumResponseDTO> listByCity (String city, Pageable pageable) {
+        Page<StadiumEntity> page = stadiumRepository.findByCityContainingIgnoreCase(city, pageable);
         return  page.map(this::toRespostaDTO);
     }
 
     private StadiumResponseDTO toRespostaDTO(StadiumEntity stadiumEntity) {
         return new StadiumResponseDTO(
                 stadiumEntity.getId(),
-                stadiumEntity.getNome(),
-                stadiumEntity.getCidade(),
-                stadiumEntity.getCapacidade());
+                stadiumEntity.getName(),
+                stadiumEntity.getCity(),
+                stadiumEntity.getCapacity());
     }
 
 

@@ -1,6 +1,8 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.MatchRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.service.MatchService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

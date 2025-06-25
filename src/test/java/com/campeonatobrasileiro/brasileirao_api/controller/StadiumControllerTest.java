@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(StadiumController.class)
-public class EstadioControllerTest {
+public class StadiumControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,132 +37,132 @@ public class EstadioControllerTest {
     private ObjectMapper objectMapper;
 
    @Test
-        void deveCadastrarEstadioComSucesso() throws Exception {
+        void registerStadiumSuccessfully() throws Exception {
             StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
-            stadiumRequestDTO.setNome("Allianz Park");
-            stadiumRequestDTO.setCidade("São Paulo");
-            stadiumRequestDTO.setCapacidade(500000);
+            stadiumRequestDTO.setName("Allianz Park");
+            stadiumRequestDTO.setCity("São Paulo");
+            stadiumRequestDTO.setCapacity(500000);
 
             StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Allianz Park", "São Paulo", 50000);
 
-            Mockito.when(stadiumService.cadastrarEstadio(Mockito.any())).thenReturn(stadiumResponseDTO);
+            Mockito.when(stadiumService.registerStadium(Mockito.any())).thenReturn(stadiumResponseDTO);
 
-            mockMvc.perform(post("/estadios")
+            mockMvc.perform(post("/stadiums")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(stadiumRequestDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.nome").value("Allianz Park"))
-                .andExpect(jsonPath("$.cidade").value("São Paulo"))
-                .andExpect(jsonPath("$.capacidade").value(50000));
+                .andExpect(jsonPath("$.name").value("Allianz Park"))
+                .andExpect(jsonPath("$.city").value("São Paulo"))
+                .andExpect(jsonPath("$.capacity").value(50000));
     }
 
     @Test
-    void deveBuscarEstadioPorIdComSucesso() throws Exception {
+    void findStadiumByIdSuccessfully() throws Exception {
         StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
-        Mockito.when(stadiumService.buscarPorId(1L)).thenReturn(stadiumResponseDTO);
+        Mockito.when(stadiumService.findById(1L)).thenReturn(stadiumResponseDTO);
 
-        mockMvc.perform(get("/estadios/1"))
+        mockMvc.perform(get("/stadiums/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.nome").value("Maracanã"))
-                .andExpect(jsonPath("$.cidade").value("Rio de Janeiro"))
-                .andExpect(jsonPath("$.capacidade").value(50000));
+                .andExpect(jsonPath("$.name").value("Maracanã"))
+                .andExpect(jsonPath("$.city").value("Rio de Janeiro"))
+                .andExpect(jsonPath("$.capacity").value(50000));
     }
 
     @Test
-    void deveAtualizarEstadioComSucesso() throws Exception {
+    void updatStadiumSuccessfully() throws Exception {
         StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
-        stadiumRequestDTO.setNome("Allianz Park");
-        stadiumRequestDTO.setCidade("São Paulo");
-        stadiumRequestDTO.setCapacidade(50000);
+        stadiumRequestDTO.setName("Allianz Park");
+        stadiumRequestDTO.setCity("São Paulo");
+        stadiumRequestDTO.setCapacity(50000);
 
         StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Neo Quimica Arena", "São Paulo", 50000);
 
-        Mockito.when(stadiumService.atualizarEstadio(eq(1L), any())).thenReturn(stadiumResponseDTO);
+        Mockito.when(stadiumService.updateStadium(eq(1L), any())).thenReturn(stadiumResponseDTO);
 
         mockMvc.perform(put("/estadios/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(stadiumRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.nome").value("Neo Quimica Arena"))
-                .andExpect(jsonPath("$.cidade").value("São Paulo"))
-                .andExpect(jsonPath("$.capacidade").value(50000));
+                .andExpect(jsonPath("$.name").value("Neo Quimica Arena"))
+                .andExpect(jsonPath("$.city").value("São Paulo"))
+                .andExpect(jsonPath("$.capacity").value(50000));
 
     }
 
     @Test
-    void deveListarEstadiosComPaginacaoComSucesso() throws Exception {
+    void listStadiumsPaginationSuccessfully() throws Exception {
         StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
         PageImpl<StadiumResponseDTO> page = new PageImpl<>(List.of(stadiumResponseDTO), PageRequest.of(0, 10), 1);
 
-        Mockito.when(stadiumService.listar(any(Pageable.class))).thenReturn(page);
+        Mockito.when(stadiumService.list(any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/estadios")
+        mockMvc.perform(get("/stadiums/pagination")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1L))
-                .andExpect(jsonPath("$.content[0].nome").value("Maracanã"))
-                .andExpect(jsonPath("$.content[0].cidade").value("Rio de Janeiro"))
-                .andExpect(jsonPath("$.content[0].capacidade").value(50000));
+                .andExpect(jsonPath("$.content[0].name").value("Maracanã"))
+                .andExpect(jsonPath("$.content[0].city").value("Rio de Janeiro"))
+                .andExpect(jsonPath("$.content[0].capacity").value(50000));
 
     }
         @Test
-        void deveBuscarEstadioPorCidadeComSucesso() throws Exception {
+        void findStadiumByCitySuccessfully() throws Exception {
             StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
             PageImpl<StadiumResponseDTO> page = new PageImpl<>(List.of(stadiumResponseDTO), PageRequest.of(0, 10), 1);
 
-            Mockito.when(stadiumService.listarPorCidade((eq("Rio de Janeiro")),any(Pageable.class))).thenReturn(page);
+            Mockito.when(stadiumService.listByCity((eq("Rio de Janeiro")),any(Pageable.class))).thenReturn(page);
 
-            mockMvc.perform(get("/estadios/buscar-por-cidade")
-                            .param("cidade", "Rio de Janeiro")
+            mockMvc.perform(get("/stadiums/find-for-city")
+                            .param("city", "Rio de Janeiro")
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content[0].id").value(1L))
-                    .andExpect(jsonPath("$.content[0].nome").value("Maracanã"))
-                    .andExpect(jsonPath("$.content[0].cidade").value("Rio de Janeiro"))
-                    .andExpect(jsonPath("$.content[0].capacidade").value(50000));
+                    .andExpect(jsonPath("$.content[0].name").value("Maracanã"))
+                    .andExpect(jsonPath("$.content[0].city").value("Rio de Janeiro"))
+                    .andExpect(jsonPath("$.content[0].capacity").value(50000));
         }
 
             @Test
-            void deveBuscarEstadioPorNomeComSucesso () throws Exception {
+            void findStadiumByNameSuccessfully() throws Exception {
                 StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Maracanã", "Rio de Janeiro", 50000);
 
-                Mockito.when(stadiumService.buscarPorNome("Maracanã")).thenReturn(List.of(stadiumResponseDTO));
+                Mockito.when(stadiumService.findByName("Maracanã")).thenReturn(List.of(stadiumResponseDTO));
 
-                mockMvc.perform(get("/estadios/nome/Maracanã"))
+                mockMvc.perform(get("/stadiums/name/Maracanã"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$[0].id").value(1L))
-                        .andExpect(jsonPath("$[0].nome").value("Maracanã"))
-                        .andExpect(jsonPath("$[0].cidade").value("Rio de Janeiro"))
-                        .andExpect(jsonPath("$[0].capacidade").value(50000));
+                        .andExpect(jsonPath("$[0].name").value("Maracanã"))
+                        .andExpect(jsonPath("$[0].city").value("Rio de Janeiro"))
+                        .andExpect(jsonPath("$[0].capacity").value(50000));
             }
 
             @Test
-            void deveretornarListaVaziaQuandoEstadioNaoEncontradoPorNome () throws Exception {
-                String nome = "Estádio não encontrado!";
+            void returnEmptyListStadiumNotFound() throws Exception {
+                String name = "Estádio não encontrado!";
 
-                Mockito.when(stadiumService.buscarPorNome(eq(nome))).thenReturn(List.of());
+                Mockito.when(stadiumService.findByName(eq(name))).thenReturn(List.of());
 
-                mockMvc.perform(get("/estadios/nome/" + nome))
+                mockMvc.perform(get("/stadiums/name/" + name))
                         .andExpect(status().isOk())
                         .andExpect(content().json("[]"));
 
-                Mockito.verify(stadiumService).buscarPorNome(nome);
+                Mockito.verify(stadiumService).findByName(name);
             }
             @Test
-            void deveRetornar404QuandoBuscarEstadioPorIdInvalido () throws Exception {
-                Long idInvalido = 99L;
+            void return404InvalidId() throws Exception {
+                Long invalidId = 99L;
 
-                Mockito.when(stadiumService.buscarPorId(eq(idInvalido))).thenThrow(new EntityNotFoundException("Estádio não encontrado!"));
+                Mockito.when(stadiumService.findById(eq(invalidId))).thenThrow(new EntityNotFoundException("Estádio não encontrado!"));
 
-                mockMvc.perform(get("/estadios/{id}", idInvalido))
+                mockMvc.perform(get("/stadiums/{id}", invalidId))
                         .andExpect(status().isNotFound());
 
-                Mockito.verify(stadiumService).buscarPorId(idInvalido);
+                Mockito.verify(stadiumService).findById(invalidId);
             }
 
         }

@@ -11,4 +11,5 @@ public interface MatchRepository extends JpaRepository<MatchEntity, Long> {
     Page<MatchEntity> findByAwayClubId (Long awayClubId, Pageable pageable);
     Page<MatchEntity> findByStadiumId (Long stadiumId, Pageable pageable);
 
+
 }
