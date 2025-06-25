@@ -3,11 +3,11 @@ package com.campeonatobrasileiro.brasileirao_api.service;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
-import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
-import com.campeonatobrasileiro.brasileirao_api.entity.PartidaEntity;
+import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
+import com.campeonatobrasileiro.brasileirao_api.entity.MatchEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
-import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
-import com.campeonatobrasileiro.brasileirao_api.repository.PartidaRepository;
+import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
+import com.campeonatobrasileiro.brasileirao_api.repository.MatchRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,10 +35,10 @@ public class PartidaServiceTest {
     private PartidaService partidaService;
 
     @Mock
-    private PartidaRepository partidaRepository;
+    private MatchRepository matchRepository;
 
     @Mock
-    private EstadioRepository estadioRepository;
+    private StadiumRepository stadiumRepository;
 
     @Mock
     private ClubRepository clubeRepository;
@@ -56,21 +56,21 @@ public class PartidaServiceTest {
 
         ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
         ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-        EstadioEntity estadioEntity = new EstadioEntity(3L, "Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntity = new StadiumEntity(3L, "Allianz Park", "São Paulo", 50000);
 
-        PartidaEntity partidaEntitySalva = new PartidaEntity();
-        partidaEntitySalva.setId(100L);
-        partidaEntitySalva.setDataHora(LocalDateTime.now());
-        partidaEntitySalva.setClubeMandante(clubeMandante);
-        partidaEntitySalva.setClubeVisitante(clubeVisitante);
-        partidaEntitySalva.setEstadio(estadioEntity);
-        partidaEntitySalva.setGolsMandante(2);
-        partidaEntitySalva.setGolsVisitante(1);
+        MatchEntity matchEntitySalva = new MatchEntity();
+        matchEntitySalva.setId(100L);
+        matchEntitySalva.setDataHora(LocalDateTime.now());
+        matchEntitySalva.setClubeMandante(clubeMandante);
+        matchEntitySalva.setClubeVisitante(clubeVisitante);
+        matchEntitySalva.setEstadio(stadiumEntity);
+        matchEntitySalva.setGolsMandante(2);
+        matchEntitySalva.setGolsVisitante(1);
 
         Mockito.when(clubeRepository.findById(1L)).thenReturn(Optional.of(clubeMandante));
         Mockito.when(clubeRepository.findById(2L)).thenReturn(Optional.of(clubeVisitante));
-        Mockito.when(estadioRepository.findById(3L)).thenReturn(Optional.of(estadioEntity));
-        Mockito.when(partidaRepository.save(Mockito.any(PartidaEntity.class))).thenReturn(partidaEntitySalva);
+        Mockito.when(stadiumRepository.findById(3L)).thenReturn(Optional.of(stadiumEntity));
+        Mockito.when(matchRepository.save(Mockito.any(MatchEntity.class))).thenReturn(matchEntitySalva);
 
         MatchResponseDTO matchResponseDTO = partidaService.cadastrarPartida(matchRequestDTO);
 
@@ -83,7 +83,7 @@ public class PartidaServiceTest {
 
         Mockito.verify(clubeRepository).findById(1L);
         Mockito.verify(clubeRepository).findById(2L);
-        Mockito.verify(estadioRepository).findById(3L);
+        Mockito.verify(stadiumRepository).findById(3L);
 
     }
 
@@ -93,11 +93,11 @@ public class PartidaServiceTest {
 
             ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
             ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-            EstadioEntity estadioEntity = new EstadioEntity(3L, "Allianz Park", "São Paulo", 50000);
+            StadiumEntity stadiumEntity = new StadiumEntity(3L, "Allianz Park", "São Paulo", 50000);
 
-            PartidaEntity partidaEntity = new PartidaEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+            MatchEntity matchEntity = new MatchEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-            Mockito.when(partidaRepository.findById(Id)).thenReturn(Optional.of(partidaEntity));
+            Mockito.when(matchRepository.findById(Id)).thenReturn(Optional.of(matchEntity));
 
             MatchResponseDTO matchResponseDTO = partidaService.buscarPorId(1L);
 
@@ -107,7 +107,7 @@ public class PartidaServiceTest {
             assertEquals(2, matchResponseDTO.getGolsMandante());
             assertEquals(1, matchResponseDTO.getGolsVisitante());
 
-            Mockito.verify(partidaRepository).findById(Id);
+            Mockito.verify(matchRepository).findById(Id);
 
         }
 
@@ -117,14 +117,14 @@ public class PartidaServiceTest {
 
         ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
         ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-        EstadioEntity estadioEntity = new EstadioEntity(1L, "Allianz Park", "São Paulo",50000);
-        PartidaEntity partidaEntity = new PartidaEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+        StadiumEntity stadiumEntity = new StadiumEntity(1L, "Allianz Park", "São Paulo",50000);
+        MatchEntity matchEntity = new MatchEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-        Mockito.when(partidaRepository.findById(Id)).thenReturn(Optional.of(partidaEntity));
+        Mockito.when(matchRepository.findById(Id)).thenReturn(Optional.of(matchEntity));
 
-        partidaService.deletarPartida(partidaEntity.getId());
+        partidaService.deletarPartida(matchEntity.getId());
 
-        Mockito.verify(partidaRepository).delete(partidaEntity);
+        Mockito.verify(matchRepository).delete(matchEntity);
         }
 
         @Test
@@ -133,13 +133,13 @@ public class PartidaServiceTest {
 
         ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
         ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-        EstadioEntity estadioEntity = new EstadioEntity(3L,"Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntity = new StadiumEntity(3L,"Allianz Park", "São Paulo", 50000);
 
-        PartidaEntity partidaEntity = new PartidaEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+        MatchEntity matchEntity = new MatchEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-            PageImpl<PartidaEntity> page = new PageImpl<>(List.of(partidaEntity));
+            PageImpl<MatchEntity> page = new PageImpl<>(List.of(matchEntity));
 
-            Mockito.when(partidaRepository.findAll(pageable)).thenReturn(page);
+            Mockito.when(matchRepository.findAll(pageable)).thenReturn(page);
 
             Page<MatchResponseDTO> resultado = partidaService.listarPartidas(pageable);
 
@@ -154,11 +154,11 @@ public class PartidaServiceTest {
 
         ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
         ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-        EstadioEntity estadioEntity = new EstadioEntity(3L,"Allianz Park", "São Paulo",50000);
+        StadiumEntity stadiumEntity = new StadiumEntity(3L,"Allianz Park", "São Paulo",50000);
 
-        PartidaEntity partidaEntity = new PartidaEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+        MatchEntity matchEntity = new MatchEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-        Mockito.when(partidaRepository.findByClubeMandanteId(1L, pageable)).thenReturn(new PageImpl<>(List.of(partidaEntity)));
+        Mockito.when(matchRepository.findByClubeMandanteId(1L, pageable)).thenReturn(new PageImpl<>(List.of(matchEntity)));
 
         Page<MatchResponseDTO> resultado = partidaService.listarPorClubeMandante(id, pageable);
 
@@ -166,7 +166,7 @@ public class PartidaServiceTest {
         assertEquals("Palmeiras", resultado.getContent().get(0).getClubeMandante());
 
 
-        Mockito.verify(partidaRepository).findByClubeMandanteId(1L, pageable);
+        Mockito.verify(matchRepository).findByClubeMandanteId(1L, pageable);
 
         }
 
@@ -177,18 +177,18 @@ public class PartidaServiceTest {
 
         ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
         ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-        EstadioEntity estadioEntity = new EstadioEntity(3L,"Allianz Park", "São Paulo",50000);
+        StadiumEntity stadiumEntity = new StadiumEntity(3L,"Allianz Park", "São Paulo",50000);
 
-        PartidaEntity partidaEntity = new PartidaEntity(2L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+        MatchEntity matchEntity = new MatchEntity(2L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-        Mockito.when(partidaRepository.findByClubeVisitanteId(2L, pageable)).thenReturn(new PageImpl<>(List.of(partidaEntity)));
+        Mockito.when(matchRepository.findByClubeVisitanteId(2L, pageable)).thenReturn(new PageImpl<>(List.of(matchEntity)));
 
         Page<MatchResponseDTO> resultado = partidaService.listarPorClubeVisitante(2L, pageable);
 
         assertEquals(1, resultado.getTotalElements());
         assertEquals("Flamengo", resultado.getContent().get(0).getClubeVisitante());
 
-        Mockito.verify(partidaRepository).findByClubeVisitanteId(2L, pageable);
+        Mockito.verify(matchRepository).findByClubeVisitanteId(2L, pageable);
 
     }
 
@@ -199,24 +199,24 @@ public class PartidaServiceTest {
 
          ClubEntity clubeMandante = new ClubEntity(1L, "Palmeiras", "SP", true);
          ClubEntity clubeVisitante = new ClubEntity(2L, "Flamengo", "RJ", true);
-         EstadioEntity estadioEntity = new EstadioEntity(3L,"Allianz Park", "São Paulo",50000);
+         StadiumEntity stadiumEntity = new StadiumEntity(3L,"Allianz Park", "São Paulo",50000);
 
-         PartidaEntity partidaEntity = new PartidaEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, estadioEntity, 2,1);
+         MatchEntity matchEntity = new MatchEntity(1L, LocalDateTime.now(), clubeMandante,clubeVisitante, stadiumEntity, 2,1);
 
-         Mockito.when(partidaRepository.findByEstadioId(3L, pageable)).thenReturn(new PageImpl<>(List.of(partidaEntity)));
+         Mockito.when(matchRepository.findByEstadioId(3L, pageable)).thenReturn(new PageImpl<>(List.of(matchEntity)));
 
          Page<MatchResponseDTO> resultado = partidaService.listarPorEstadio(id, pageable);
 
          assertEquals(1, resultado.getTotalElements());
          assertEquals("Allianz Park", resultado.getContent().get(0).getEstadio());
 
-         Mockito.verify(partidaRepository).findByEstadioId(3L, pageable);
+         Mockito.verify(matchRepository).findByEstadioId(3L, pageable);
 
      }
 
      @Test
     void buscarPartidaporIdDeveLancarExcecao(){
-      Mockito.when(partidaRepository.findById(999L)).thenReturn(Optional.empty());
+      Mockito.when(matchRepository.findById(999L)).thenReturn(Optional.empty());
 
          EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
              partidaService.buscarPorId(999L);

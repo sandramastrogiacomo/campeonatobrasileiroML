@@ -49,7 +49,7 @@ public class ClubController {
     @GetMapping
     public Page<ClubResponseDTO> list(@RequestParam(required = false) String name,
                                         @RequestParam(required = false) String state,
-                                        @RequestParam(required = false) Boolean active,
+                                        @RequestParam(required = false) boolean active,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size){
         return clubService.list(name, state, active, page, size);

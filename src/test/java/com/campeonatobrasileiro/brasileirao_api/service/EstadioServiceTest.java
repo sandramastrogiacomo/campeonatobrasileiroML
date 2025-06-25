@@ -2,8 +2,8 @@ package com.campeonatobrasileiro.brasileirao_api.service;
 
 import com.campeonatobrasileiro.brasileirao_api.dto.StadiumRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.StadiumResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.entity.EstadioEntity;
-import com.campeonatobrasileiro.brasileirao_api.repository.EstadioRepository;
+import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
+import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,28 +26,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EstadioServiceTest {
 
     @InjectMocks
-    private EstadioService estadioService;
+    private StadiumService stadiumService;
 
     @Mock
-    private EstadioRepository estadioRepository;
-    private EstadioEntity estadio;
+    private StadiumRepository stadiumRepository;
+    private StadiumEntity estadio;
 
     @Test
     void cadastrarEstadioComSucesso() {
         StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
-        EstadioEntity estadioEntity = new EstadioEntity(1l,"Allianz Park","São Paulo",50000);
+        StadiumEntity stadiumEntity = new StadiumEntity(1l,"Allianz Park","São Paulo",50000);
 
-        Mockito.when(estadioRepository.save(Mockito.any(EstadioEntity.class))).thenReturn(estadioEntity);
+        Mockito.when(stadiumRepository.save(Mockito.any(StadiumEntity.class))).thenReturn(stadiumEntity);
 
-        StadiumResponseDTO stadiumResponseDTO = estadioService.cadastrarEstadio(stadiumRequestDTO);
+        StadiumResponseDTO stadiumResponseDTO = stadiumService.cadastrarEstadio(stadiumRequestDTO);
 
         Assertions.assertNotNull(stadiumResponseDTO);
 
-        Assertions.assertEquals(stadiumResponseDTO.getNome(), estadioEntity.getNome());
-        Assertions.assertEquals(stadiumResponseDTO.getCidade(), estadioEntity.getCidade());
-        Assertions.assertEquals(stadiumResponseDTO.getCapacidade(), estadioEntity.getCapacidade());
+        Assertions.assertEquals(stadiumResponseDTO.getNome(), stadiumEntity.getNome());
+        Assertions.assertEquals(stadiumResponseDTO.getCidade(), stadiumEntity.getCidade());
+        Assertions.assertEquals(stadiumResponseDTO.getCapacidade(), stadiumEntity.getCapacidade());
 
-        Mockito.verify(estadioRepository, Mockito.times(1)).save(Mockito.any(EstadioEntity.class));
+        Mockito.verify(stadiumRepository, Mockito.times(1)).save(Mockito.any(StadiumEntity.class));
 
     }
 
@@ -60,82 +60,82 @@ public class EstadioServiceTest {
         stadiumRequestDTO.setCidade("Sao Paulo");
         stadiumRequestDTO.setCapacidade(47000);
 
-        EstadioEntity estadioEntityExistente = new EstadioEntity(id, "Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntityExistente = new StadiumEntity(id, "Allianz Park", "São Paulo", 50000);
 
-        EstadioEntity estadioEntityAtualizado = new EstadioEntity(id,
+        StadiumEntity stadiumEntityAtualizado = new StadiumEntity(id,
         stadiumRequestDTO.getNome(),
         stadiumRequestDTO.getCidade(),
         stadiumRequestDTO.getCapacidade());
 
-        Mockito.when(estadioRepository.findById(id)).thenReturn(Optional.of(estadioEntityExistente));
-        Mockito.when(estadioRepository.save(Mockito.any(EstadioEntity.class))).thenReturn(estadioEntityAtualizado);
+        Mockito.when(stadiumRepository.findById(id)).thenReturn(Optional.of(stadiumEntityExistente));
+        Mockito.when(stadiumRepository.save(Mockito.any(StadiumEntity.class))).thenReturn(stadiumEntityAtualizado);
 
-        StadiumResponseDTO stadiumResponseDTO = estadioService.atualizarEstadio(id, stadiumRequestDTO);
+        StadiumResponseDTO stadiumResponseDTO = stadiumService.atualizarEstadio(id, stadiumRequestDTO);
 
         Assertions.assertNotNull(stadiumResponseDTO);
         Assertions.assertEquals(stadiumRequestDTO.getNome(), stadiumResponseDTO.getNome());
         Assertions.assertEquals(stadiumRequestDTO.getCidade(), stadiumResponseDTO.getCidade());
         Assertions.assertEquals(stadiumRequestDTO.getCapacidade(), stadiumResponseDTO.getCapacidade());
 
-        Mockito.verify(estadioRepository).findById(id);
-        Mockito.verify(estadioRepository).save(Mockito.any(EstadioEntity.class));
+        Mockito.verify(stadiumRepository).findById(id);
+        Mockito.verify(stadiumRepository).save(Mockito.any(StadiumEntity.class));
     }
    @Test
     void buscarEstadioPorIdComSucesso() {
         Long id = 1L;
-        EstadioEntity estadioEntity = new EstadioEntity(id, "Allianz Park", "São Paulo", 50000);
-        Mockito.when(estadioRepository.findById(id)).thenReturn(Optional.of(estadioEntity));
+        StadiumEntity stadiumEntity = new StadiumEntity(id, "Allianz Park", "São Paulo", 50000);
+        Mockito.when(stadiumRepository.findById(id)).thenReturn(Optional.of(stadiumEntity));
 
-        StadiumResponseDTO resposta = estadioService.buscarPorId(id);
+        StadiumResponseDTO resposta = stadiumService.buscarPorId(id);
 
-        Assertions.assertEquals(resposta.getNome(), estadioEntity.getNome());
-        Assertions.assertEquals(resposta.getCapacidade(), estadioEntity.getCapacidade());
-        Assertions.assertEquals(resposta.getCapacidade(), estadioEntity.getCapacidade());
+        Assertions.assertEquals(resposta.getNome(), stadiumEntity.getNome());
+        Assertions.assertEquals(resposta.getCapacidade(), stadiumEntity.getCapacidade());
+        Assertions.assertEquals(resposta.getCapacidade(), stadiumEntity.getCapacidade());
 
-        Mockito.verify(estadioRepository, Mockito.times(1)).findById(id);
+        Mockito.verify(stadiumRepository, Mockito.times(1)).findById(id);
 
    }
     @Test
     void buscarEstadioPorNomeComSucesso() {
         String nome = "Allianz Park";
-       EstadioEntity estadio = new EstadioEntity(1l,"Allianz Park","São Paulo",50000);
+       StadiumEntity estadio = new StadiumEntity(1l,"Allianz Park","São Paulo",50000);
 
-        Mockito.when(estadioRepository.findByNomeIgnoreCase(nome)).thenReturn(Optional.of(estadio));
+        Mockito.when(stadiumRepository.findByNomeIgnoreCase(nome)).thenReturn(Optional.of(estadio));
 
-        List<StadiumResponseDTO> resultado = estadioService. buscarPorNome(nome);
+        List<StadiumResponseDTO> resultado = stadiumService. buscarPorNome(nome);
 
         Assertions.assertEquals(1, resultado.size());
         Assertions.assertEquals("Allianz Park", resultado.get(0).getNome());
         Assertions.assertEquals("São Paulo", resultado.get(0).getCidade());
         Assertions.assertEquals(50000, resultado.get(0).getCapacidade());
 
-        Mockito.verify(estadioRepository).findByNomeIgnoreCase(nome);
+        Mockito.verify(stadiumRepository).findByNomeIgnoreCase(nome);
     }
 
    @Test
     void listarEstadioComPaginacao() {
        Pageable pageable = PageRequest.of(0, 10);
-       List<EstadioEntity> lista = List.of( new EstadioEntity(1L, "Allianz Park", "São Paulo", 50000 ),
-               new EstadioEntity(2L, "Maracanã", "Rio de Janeiro", 55000));
+       List<StadiumEntity> lista = List.of( new StadiumEntity(1L, "Allianz Park", "São Paulo", 50000 ),
+               new StadiumEntity(2L, "Maracanã", "Rio de Janeiro", 55000));
 
-       Mockito.when(estadioRepository.findAll(pageable)).thenReturn(new PageImpl<>(lista));
+       Mockito.when(stadiumRepository.findAll(pageable)).thenReturn(new PageImpl<>(lista));
 
-       Page<StadiumResponseDTO> pagina = estadioService.listar(pageable);
+       Page<StadiumResponseDTO> pagina = stadiumService.listar(pageable);
 
        Assertions.assertEquals(2, pagina.getContent ().size());
        Assertions.assertEquals ("Allianz Park", pagina.getContent().get(0).getNome());
        Assertions.assertEquals ("Maracanã", pagina.getContent().get(1).getNome());
 
-       Mockito.verify(estadioRepository, Mockito.times(1)).findAll(pageable);
+       Mockito.verify(stadiumRepository, Mockito.times(1)).findAll(pageable);
    }
 
 
    @Test
     void buscarEstadioPorIdDeveLancarExcecao() {
-       Mockito.when(estadioRepository.findById(999L)).thenReturn(Optional.empty());
+       Mockito.when(stadiumRepository.findById(999L)).thenReturn(Optional.empty());
 
        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
-           estadioService.buscarPorId(999L);
+           stadiumService.buscarPorId(999L);
        });
 
        assertEquals("Estádio não encontrado!", exception.getMessage());
@@ -146,21 +146,21 @@ public class EstadioServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         String cidade = "São Paulo";
 
-        EstadioEntity estadioEntity1 = new EstadioEntity(1L, "Allianz Park", "São Paulo", 50000);
-        EstadioEntity estadioEntity2 = new EstadioEntity(2L, "Morumbis", "São Paulo", 55000);
-        List<EstadioEntity> lista = List.of(estadioEntity1, estadioEntity2);
+        StadiumEntity stadiumEntity1 = new StadiumEntity(1L, "Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntity2 = new StadiumEntity(2L, "Morumbis", "São Paulo", 55000);
+        List<StadiumEntity> lista = List.of(stadiumEntity1, stadiumEntity2);
 
-        Page<EstadioEntity> page = new PageImpl<>(lista);
+        Page<StadiumEntity> page = new PageImpl<>(lista);
 
-        Mockito.when(estadioRepository.findByCidadeContainingIgnoreCase(cidade, pageable)).thenReturn(page);
+        Mockito.when(stadiumRepository.findByCidadeContainingIgnoreCase(cidade, pageable)).thenReturn(page);
 
-        Page<StadiumResponseDTO> resultado = estadioService.listarPorCidade(cidade,pageable);
+        Page<StadiumResponseDTO> resultado = stadiumService.listarPorCidade(cidade,pageable);
 
         Assertions.assertEquals(2, resultado.getContent().size());
         Assertions.assertEquals("Allianz Park", resultado.getContent().get(0).getNome());
         Assertions.assertEquals("Morumbis", resultado.getContent().get(1).getNome());
 
-        Mockito.verify(estadioRepository).findByCidadeContainingIgnoreCase(cidade, pageable);
+        Mockito.verify(stadiumRepository).findByCidadeContainingIgnoreCase(cidade, pageable);
     }
 
 }

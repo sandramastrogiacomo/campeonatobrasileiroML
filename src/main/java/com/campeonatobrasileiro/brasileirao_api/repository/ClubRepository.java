@@ -14,14 +14,14 @@ import java.util.List;
 public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
 
     @Query("SELECT c FROM ClubEntity c " +
-            "WHERE (:nome IS NULL OR LOWER(c.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) " +
-            "AND (:estado IS NULL OR LOWER(c.estado) LIKE LOWER(CONCAT('%', :estado, '%'))) " +
-            "AND (:ativo IS NULL OR c.ativo = :ativo)")
-    Page<ClubEntity> buscarComFiltros(@Param("nome") String nome,
-                                      @Param("estado") String estado,
-                                      @Param("ativo") Boolean ativo,
+            "WHERE (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:state IS NULL OR LOWER(c.state) LIKE LOWER(CONCAT('%', :state, '%'))) " +
+            "AND (:active IS NULL OR c.active = :active)")
+    Page<ClubEntity> findByFilters(@Param("name") String name,
+                                      @Param("state") String state,
+                                      @Param("active") Boolean active,
                                       Pageable pageable);
 
-    List<ClubEntity> findByNome(@Param("nome") String nome);
+    List<ClubEntity> findByName(@Param("name") String name);
 }
 

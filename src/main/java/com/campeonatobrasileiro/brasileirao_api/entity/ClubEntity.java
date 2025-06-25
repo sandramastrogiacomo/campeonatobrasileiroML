@@ -12,27 +12,27 @@ public class ClubEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String name;
 
-    private String estado;
+    private String state;
 
-    private boolean ativo = true;
+    private boolean active = true;
 
-    @OneToMany (mappedBy = "clubeMandante", fetch = FetchType.LAZY)
-    private List<PartidaEntity> partidasComoMandante;
+    @OneToMany (mappedBy = "homeClub", fetch = FetchType.LAZY)
+    private List<MatchEntity> homeMatches;
 
-    @OneToMany(mappedBy = "clubeVisitante", fetch = FetchType.LAZY)
-    private List<PartidaEntity> partidasComoVisitante;
+    @OneToMany(mappedBy = "awayClub", fetch = FetchType.LAZY)
+    private List<MatchEntity>awayMatches;
 
 
     public ClubEntity() {
     }
 
-    public ClubEntity(Long id, String nome, String estado, boolean ativo) {
+    public ClubEntity(Long id, String name, String state, boolean active) {
         this.id = id;
-        this.nome = nome;
-        this.estado = estado;
-        this.ativo = ativo;
+        this.name = name;
+        this.state = state;
+        this.active = active;
     }
 
     public Long getId() {
@@ -43,27 +43,43 @@ public class ClubEntity {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome (String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public  String getEstado() {
-        return estado;
+    public String getState() {
+        return state;
     }
 
-    public void setEstado( String estado) {
-        this.estado = estado;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public boolean isAtivo() {
-        return ativo;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setAtivo( boolean ativo) {
-        this.ativo = ativo;
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public List<MatchEntity> getHomeMatches() {
+        return homeMatches;
+    }
+
+    public void setHomeMatches(List<MatchEntity> homeMatches) {
+        this.homeMatches = homeMatches;
+    }
+
+    public List<MatchEntity> getAwayMatches() {
+        return awayMatches;
+    }
+
+    public void setAwayMatches(List<MatchEntity> awayMatches) {
+        this.awayMatches = awayMatches;
     }
 }
