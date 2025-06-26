@@ -34,7 +34,7 @@ public class StadiumController {
         @PutMapping("/{id}")
         public StadiumResponseDTO updateStadium (@Valid @RequestBody StadiumRequestDTO stadiumRequestDTO,
                 @PathVariable Long id){
-            return StadiumService.updateStadium(id, stadiumRequestDTO);
+            return stadiumService.updateStadium (id, stadiumRequestDTO);
         }
 
         @GetMapping("/{id}")

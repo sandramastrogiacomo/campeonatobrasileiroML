@@ -17,11 +17,11 @@ public interface ClubRepository extends JpaRepository<ClubEntity, Long> {
             "WHERE (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
             "AND (:state IS NULL OR LOWER(c.state) LIKE LOWER(CONCAT('%', :state, '%'))) " +
             "AND (:active IS NULL OR c.active = :active)")
-    Page<ClubEntity> findByFilters(@Param("name") String name,
+    Page<ClubEntity> searchWithFilters(@Param("name") String name,
                                       @Param("state") String state,
                                       @Param("active") Boolean active,
                                       Pageable pageable);
 
-    List<ClubEntity> findByName(@Param("name") String name);
+    List<ClubEntity> findByNameContainingIgnoreCase(String name);
 }
 

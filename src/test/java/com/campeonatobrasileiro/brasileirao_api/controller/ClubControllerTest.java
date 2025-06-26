@@ -36,7 +36,10 @@ public class ClubControllerTest {
 
    @Test
    void createClubSuccessfully() throws Exception {
-       ClubRequestDTO clubRequestDTO = new ClubRequestDTO("Palmeiras", "SP");
+       ClubRequestDTO clubRequestDTO = new ClubRequestDTO();
+       clubRequestDTO.setName("Palmeiras");
+       clubRequestDTO.setState("SP");
+       clubRequestDTO.setActive(true);
        ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true);
 
        Mockito.when(clubService.createClub(any())).thenReturn(clubResponseDTO);
@@ -49,6 +52,7 @@ public class ClubControllerTest {
                .andExpect(jsonPath("$.name").value("Palmeiras"))
                .andExpect(jsonPath("$.state").value("SP"));
    }
+
     @Test
     void findClubByIdSuccessfully() throws Exception {
        ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true);
@@ -68,7 +72,7 @@ public class ClubControllerTest {
        ClubResponseDTO clubResponseDTO= new ClubResponseDTO(1L, "Palmeiras", "SP", true);
         List<ClubResponseDTO> list = List.of(clubResponseDTO);
 
-        Mockito.when(clubService.findByName(name)).thenReturn(list);
+        Mockito.when(clubService.findByNameContainigIgnoreCase(name)).thenReturn(list);
 
         mockMvc.perform(get("/clubs/name/{name}", name))
                 .andExpect(status().isOk())
@@ -76,11 +80,15 @@ public class ClubControllerTest {
                 .andExpect(jsonPath("$[0].state").value("SP"))
                 .andExpect(jsonPath("$[0].active").value(true));
 
-        Mockito.verify(clubService, Mockito.times(1)).findByName(name);
+        Mockito.verify(clubService, Mockito.times(1)).findByNameContainigIgnoreCase(name);
     }
    @Test
     void updateClubSuccessfully() throws Exception {
-       ClubRequestDTO clubRequestDTO = new ClubRequestDTO("Sociedade Esportiva Palmeiras", "SP");
+       ClubRequestDTO clubRequestDTO = new ClubRequestDTO();
+       clubRequestDTO.setName("Palmeiras");
+       clubRequestDTO.setState("SP");
+       clubRequestDTO.setActive(true);
+
        ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Sociedade Esportiva Palmeiras", "SP", true);
 
        Mockito.when(clubService.updateClub(eq(1L), any())).thenReturn(clubResponseDTO);

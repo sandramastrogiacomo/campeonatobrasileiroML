@@ -41,7 +41,7 @@ public class StadiumControllerTest {
             StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
             stadiumRequestDTO.setName("Allianz Park");
             stadiumRequestDTO.setCity("São Paulo");
-            stadiumRequestDTO.setCapacity(500000);
+            stadiumRequestDTO.setCapacity(50000);
 
             StadiumResponseDTO stadiumResponseDTO = new StadiumResponseDTO(1L, "Allianz Park", "São Paulo", 50000);
 
@@ -71,7 +71,7 @@ public class StadiumControllerTest {
     }
 
     @Test
-    void updatStadiumSuccessfully() throws Exception {
+    void updateStadiumSuccessfully() throws Exception {
         StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
         stadiumRequestDTO.setName("Allianz Park");
         stadiumRequestDTO.setCity("São Paulo");
@@ -81,7 +81,7 @@ public class StadiumControllerTest {
 
         Mockito.when(stadiumService.updateStadium(eq(1L), any())).thenReturn(stadiumResponseDTO);
 
-        mockMvc.perform(put("/estadios/1")
+        mockMvc.perform(put("/stadiums/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(stadiumRequestDTO)))
                 .andExpect(status().isOk())
@@ -99,7 +99,7 @@ public class StadiumControllerTest {
 
         Mockito.when(stadiumService.list(any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/stadiums/pagination")
+        mockMvc.perform(get("/stadiums")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())

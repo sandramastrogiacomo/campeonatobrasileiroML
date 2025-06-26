@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import com.campeonatobrasileiro.brasileirao_api.mapper.ClubMapperImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +25,10 @@ public class ClubService {
     }
 
     public ClubResponseDTO createClub(ClubRequestDTO clubRequestDTO) {
-        ClubEntity clubEntity = new ClubEntity();
+        ClubEntity clubEntity = ClubMapperImpl.toEntity(clubRequestDTO);
 
-        clubEntity.setName(clubRequestDTO.getName());
-        clubEntity.setState(clubRequestDTO.getState());
-        clubEntity.setActive(true);
-
-        clubEntity = clubRepository.save(clubEntity);
-        return toRespostaDTO(clubEntity);
+        clubRepository.save(clubEntity);
+        return ClubMapperImpl.toResponseDTO(clubEntity);
 
     }
 
@@ -42,8 +39,8 @@ public class ClubService {
         clubEntity.setName(clubRequestDTO.getName());
         clubEntity.setState(clubRequestDTO.getState());
 
-        clubEntity = clubRepository.save(clubEntity);
-        return toRespostaDTO(clubEntity);
+        clubRepository.save(clubEntity);
+        return ClubMapperImpl.toResponseDTO(clubEntity);
     }
 
     public void deactivateClub (Long id) {
@@ -57,27 +54,18 @@ public class ClubService {
     public ClubResponseDTO findById(Long id) {
         ClubEntity clubEntity = clubRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado! "));
-        return toRespostaDTO(clubEntity);
+        return ClubMapperImpl.toResponseDTO(clubEntity);
     }
 
-    public Page<ClubResponseDTO> list(String name, String state, boolean active, int page, int size) {
+    public List<ClubResponseDTO> findByNameContainigIgnoreCase(String name) {
+        List<ClubEntity> clubs = clubRepository.findByNameContainingIgnoreCase(name);
+        return clubs.stream().map(ClubMapperImpl::toResponseDTO).collect(Collectors.toList());
+    }
+
+    public Page<ClubResponseDTO> list(String name, String state, Boolean active, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
 
-        Page<ClubEntity> clubs = clubRepository.findByFilters(name,state,active, pageable);
-
-       return clubs.map(this::toRespostaDTO);
+       return clubRepository.searchWithFilters(name,state,active, pageable).map(ClubMapperImpl::toResponseDTO);
     }
 
-    private ClubResponseDTO toRespostaDTO(ClubEntity clubEntity) {
-        return new ClubResponseDTO(
-                clubEntity.getId(),
-                clubEntity.getName(),
-                clubEntity.getState(),
-                clubEntity.isActive());
-    }
-
-    public List<ClubResponseDTO> findByName(String name) {
-        List<ClubEntity> clubs = clubRepository.findByName(name);
-        return clubs.stream().map(this::toRespostaDTO).collect(Collectors.toList());
-    }
 }

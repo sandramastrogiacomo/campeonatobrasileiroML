@@ -1,9 +1,17 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MatchRequestDTO {
 
     @NotNull(message = "A data e a hora da partida são obrigatórias!")
@@ -24,51 +32,5 @@ public class MatchRequestDTO {
     private Integer homeGoals;
     private Integer awayGoals;
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public Long getHomeClubId() {
-        return homeClubId;
-    }
-
-    public void setHomeClubId(Long homeClubId) {
-        this.homeClubId = homeClubId;
-    }
-
-    public Long getAwayClubId() {
-        return awayClubId;
-    }
-
-    public void setAwayClubId(Long awayClubId) {
-        this.awayClubId = awayClubId;
-    }
-
-    public Long getStadiumId() {
-        return stadiumId;
-    }
-
-    public void setStadiumId(Long stadiumId) {
-        this.stadiumId = stadiumId;
-    }
-
-    public Integer getHomeGoals() {
-        return homeGoals;
-    }
-
-    public void setHomeGoals(Integer homeGoals) {
-        this.homeGoals = homeGoals;
-    }
-
-    public Integer getAwayGoals() {
-        return awayGoals;
-    }
-
-    public void setAwayGoals(Integer awayGoals) {
-        this.awayGoals = awayGoals;
-    }
 }

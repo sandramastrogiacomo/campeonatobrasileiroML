@@ -60,7 +60,7 @@ public class MatchControllerTest {
 
         Mockito.when(matchService.registerMatch(any())).thenReturn(matchResponseDTO);
 
-        mockMvc.perform(post("/partidas")
+        mockMvc.perform(post("/matches")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(matchRequestDTO)))
                 .andExpect(status().isOk())

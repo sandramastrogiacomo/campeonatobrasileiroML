@@ -41,8 +41,8 @@ public class ClubController {
     }
 
     @GetMapping("/name/{name}")
-    public List<ClubResponseDTO> findByName(@PathVariable String name) {
-        return clubService.findByName(name);
+    public List<ClubResponseDTO> findByNameContainingIgnoreCase(@PathVariable String name) {
+        return clubService.findByNameContainigIgnoreCase(name);
 
     }
 

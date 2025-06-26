@@ -1,7 +1,15 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StadiumRequestDTO {
 
     @NotBlank(message = "O nome do estádio é obrigatório!")
@@ -15,27 +23,5 @@ public class StadiumRequestDTO {
     @Positive(message = "A capacidade deve ser positiva!")
     private Integer capacity;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
 }

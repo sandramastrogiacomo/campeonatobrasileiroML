@@ -35,7 +35,11 @@ public class StadiumServiceTest {
     @Test
     void registerStadiumSuccessfully() {
         StadiumRequestDTO stadiumRequestDTO = new StadiumRequestDTO();
-        StadiumEntity stadiumEntity = new StadiumEntity(1l,"Allianz Park","São Paulo",50000);
+
+        StadiumEntity stadiumEntity = new StadiumEntity();
+        stadiumEntity.setName("Allianz Park");
+        stadiumEntity.setCity("Sao Paulo");
+        stadiumEntity.setCapacity(50000);
 
         Mockito.when(stadiumRepository.save(Mockito.any(StadiumEntity.class))).thenReturn(stadiumEntity);
 
@@ -60,22 +64,21 @@ public class StadiumServiceTest {
         stadiumRequestDTO.setCity("Sao Paulo");
         stadiumRequestDTO.setCapacity(47000);
 
-        StadiumEntity stadiumEntityExist = new StadiumEntity(id, "Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntityExist = new StadiumEntity(id,"Allianz Park","São Paulo", 50000);
+        StadiumEntity stadiumEntityUpdated = new StadiumEntity(id,"Neo Quimica Arena", "São Paulo", 47000);
 
-        StadiumEntity stadiumEntityUpdate = new StadiumEntity(id,
-        stadiumRequestDTO.getName(),
-        stadiumRequestDTO.getCity(),
-        stadiumRequestDTO.getCapacity());
 
         Mockito.when(stadiumRepository.findById(id)).thenReturn(Optional.of(stadiumEntityExist));
-        Mockito.when(stadiumRepository.save(Mockito.any(StadiumEntity.class))).thenReturn(stadiumEntityUpdate);
+
+        Mockito.when(stadiumRepository.save(Mockito.any(StadiumEntity.class))).thenReturn(stadiumEntityUpdated);
 
         StadiumResponseDTO stadiumResponseDTO = stadiumService.updateStadium(id, stadiumRequestDTO);
 
         Assertions.assertNotNull(stadiumResponseDTO);
-        Assertions.assertEquals(stadiumRequestDTO.getName(), stadiumResponseDTO.getName());
-        Assertions.assertEquals(stadiumRequestDTO.getCity(), stadiumResponseDTO.getCity());
-        Assertions.assertEquals(stadiumRequestDTO.getCapacity(), stadiumResponseDTO.getCapacity());
+        Assertions.assertEquals("Neo Quimica Arena", stadiumResponseDTO.getName());
+        Assertions.assertEquals("São Paulo",stadiumResponseDTO.getCity());
+        Assertions.assertEquals( 47000,stadiumResponseDTO.getCapacity());
+
 
         Mockito.verify(stadiumRepository).findById(id);
         Mockito.verify(stadiumRepository).save(Mockito.any(StadiumEntity.class));
@@ -83,7 +86,7 @@ public class StadiumServiceTest {
    @Test
     void findStadiumByIdSuccessfully() {
         Long id = 1L;
-        StadiumEntity stadiumEntity = new StadiumEntity(id, "Allianz Park", "São Paulo", 50000);
+        StadiumEntity stadiumEntity = new StadiumEntity();
         Mockito.when(stadiumRepository.findById(id)).thenReturn(Optional.of(stadiumEntity));
 
         StadiumResponseDTO response = stadiumService.findById(id);
@@ -97,8 +100,12 @@ public class StadiumServiceTest {
    }
     @Test
     void findStadiumByNameSuccessfully() {
-        String name = "Allianz Park";
-       StadiumEntity stadium = new StadiumEntity(1l,"Allianz Park","São Paulo",50000);
+       String name = "Allianz Park";
+
+       StadiumEntity stadium = new StadiumEntity();
+       stadium.setName("Allianz Park");
+       stadium.setCity("São Paulo");
+       stadium.setCapacity(47000);
 
         Mockito.when(stadiumRepository.findByNameIgnoreCase(name)).thenReturn(Optional.of(stadium));
 
@@ -115,8 +122,8 @@ public class StadiumServiceTest {
    @Test
     void listStadiumPaginatedSuccessfully() {
        Pageable pageable = PageRequest.of(0, 10);
-       List<StadiumEntity> list = List.of( new StadiumEntity(1L, "Allianz Park", "São Paulo", 50000 ),
-               new StadiumEntity(2L, "Maracanã", "Rio de Janeiro", 55000));
+       List<StadiumEntity> list = List.of( new StadiumEntity(),
+               new StadiumEntity());
 
        Mockito.when(stadiumRepository.findAll(pageable)).thenReturn(new PageImpl<>(list));
 
@@ -146,8 +153,8 @@ public class StadiumServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         String city = "São Paulo";
 
-        StadiumEntity stadiumEntity1 = new StadiumEntity(1L, "Allianz Park", "São Paulo", 50000);
-        StadiumEntity stadiumEntity2 = new StadiumEntity(2L, "Morumbis", "São Paulo", 55000);
+        StadiumEntity stadiumEntity1 = new StadiumEntity();
+        StadiumEntity stadiumEntity2 = new StadiumEntity();
         List<StadiumEntity> list = List.of(stadiumEntity1, stadiumEntity2);
 
         Page<StadiumEntity> page = new PageImpl<>(list);
