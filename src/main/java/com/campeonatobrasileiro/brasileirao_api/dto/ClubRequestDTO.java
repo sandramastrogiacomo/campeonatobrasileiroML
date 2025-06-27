@@ -22,6 +22,9 @@ public class ClubRequestDTO {
     @NotNull(message = "O campo 'active' é obrigatório!")
     private Boolean active;
 
+    @NotNull
+    private Long stadiumId;
+
 
 }
 

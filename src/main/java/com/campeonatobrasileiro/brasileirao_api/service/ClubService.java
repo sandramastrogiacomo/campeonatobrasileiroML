@@ -3,7 +3,9 @@ package com.campeonatobrasileiro.brasileirao_api.service;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
+import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
+import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,28 +21,37 @@ import java.util.stream.Collectors;
 public class ClubService {
 
     private final ClubRepository clubRepository;
+    private final StadiumRepository stadiumRepository;
 
-    public ClubService(ClubRepository clubRepository) {
+    public ClubService(ClubRepository clubRepository, StadiumRepository stadiumRepository) {
     this.clubRepository = clubRepository;
+        this.stadiumRepository = stadiumRepository;
     }
 
     public ClubResponseDTO createClub(ClubRequestDTO clubRequestDTO) {
-        ClubEntity clubEntity = ClubMapperImpl.toEntity(clubRequestDTO);
+        StadiumEntity stadiumEntity = stadiumRepository.findById(clubRequestDTO.getStadiumId())
+                .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));;
 
-        clubRepository.save(clubEntity);
-        return ClubMapperImpl.toResponseDTO(clubEntity);
+                ClubEntity clubEntity = ClubMapperImpl.toEntity(clubRequestDTO);
+                clubEntity.setStadium(stadiumEntity);
 
+                ClubEntity savedClubEntity = clubRepository.save(clubEntity);
+                return ClubMapperImpl.toResponseDTO(savedClubEntity);
     }
 
     public ClubResponseDTO updateClub(Long id, ClubRequestDTO clubRequestDTO) {
-        ClubEntity clubEntity = clubRepository.findById(id)
+        ClubEntity clubEntityExist = clubRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Clube não encontrado!"));
 
-        clubEntity.setName(clubRequestDTO.getName());
-        clubEntity.setState(clubRequestDTO.getState());
+        StadiumEntity stadiumEntity = stadiumRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
-        clubRepository.save(clubEntity);
-        return ClubMapperImpl.toResponseDTO(clubEntity);
+        clubEntityExist.setName(clubRequestDTO.getName());
+        clubEntityExist.setState(clubRequestDTO.getState());
+        clubEntityExist.setStadium(stadiumEntity);
+
+        ClubEntity clubEntityUpdated = clubRepository.save(clubEntityExist);
+        return ClubMapperImpl.toResponseDTO(clubEntityUpdated);
     }
 
     public void deactivateClub (Long id) {

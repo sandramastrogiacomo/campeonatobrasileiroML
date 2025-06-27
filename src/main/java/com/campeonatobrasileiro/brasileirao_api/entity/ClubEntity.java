@@ -22,6 +22,10 @@ public class ClubEntity {
     private String state;
     private boolean active = true;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stadium_id")
+    private StadiumEntity stadium;
+
     @OneToMany (mappedBy = "homeClub", fetch = FetchType.LAZY)
     private List<MatchEntity> homeMatches;
 

@@ -6,6 +6,7 @@ import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
 import com.campeonatobrasileiro.brasileirao_api.mapper.StadiumMapperimpl;
 import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,16 +16,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-
+@RequiredArgsConstructor
 @Service
 public class StadiumService {
 
 
     private final StadiumRepository stadiumRepository;
-
-    public StadiumService(StadiumRepository stadiumRepository) {
-        this.stadiumRepository = stadiumRepository;
-    }
 
     public StadiumResponseDTO registerStadium(StadiumRequestDTO stadiumRequestDTO) {
         StadiumEntity stadiumEntity = new StadiumEntity();

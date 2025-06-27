@@ -4,6 +4,7 @@ import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
+import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +28,9 @@ public class ClubServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private StadiumRepository stadiumRepository;
+
     @InjectMocks
     private ClubService clubService;
 
@@ -36,7 +39,7 @@ public class ClubServiceTest {
 
     @BeforeEach
     public void setUp() {
-        clubService = new ClubService(clubRepository);
+        clubService = new ClubService(clubRepository,stadiumRepository);
 
         clubEntity = new ClubEntity();
         clubResponseDTO = new ClubResponseDTO();
