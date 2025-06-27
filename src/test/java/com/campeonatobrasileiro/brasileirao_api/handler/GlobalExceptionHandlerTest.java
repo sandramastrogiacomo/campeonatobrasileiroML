@@ -1,8 +1,8 @@
 package com.campeonatobrasileiro.brasileirao_api.handler;
 
-import com.campeonatobrasileiro.brasileirao_api.controller.ClubeController;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubeRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.service.ClubeService;
+import com.campeonatobrasileiro.brasileirao_api.controller.ClubController;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
+import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest (ClubeController.class)
+@WebMvcTest (ClubController.class)
 public class GlobalExceptionHandlerTest {
 
     @Autowired
@@ -28,20 +28,20 @@ public class GlobalExceptionHandlerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ClubeService clubeService;
+    private ClubService clubService;
 
     @Test
-    public void deveRetornarErros_quandoDTOInvalido() throws Exception {
-        ClubeRequestDTO clubeInvalido = new ClubeRequestDTO();
-        clubeInvalido.setNome("A");
-        clubeInvalido.setEstado("");
+    public void returnErrorsInvalidDTO() throws Exception {
+        ClubRequestDTO invalidClub = new ClubRequestDTO();
+        invalidClub.setName("A");
+        invalidClub.setState("");
 
-        mockMvc.perform(post("/clubes")
+        mockMvc.perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clubeInvalido)))
+                        .content(objectMapper.writeValueAsString(invalidClub)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0]").exists())
-                .andExpect(jsonPath("$[0]").value(containsString("nome")))
-                .andExpect(jsonPath("$[1]").value(containsString("estado")));
+                .andExpect(jsonPath("$[0]").value(containsString("name")))
+                .andExpect(jsonPath("$[1]").value(containsString("state")));
     }
 }
