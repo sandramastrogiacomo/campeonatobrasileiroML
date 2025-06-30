@@ -5,9 +5,11 @@ import com.campeonatobrasileiro.brasileirao_api.dto.StadiumResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.StadiumService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,18 +50,17 @@ public class StadiumController {
         }
 
         @GetMapping("/find-for-city")
-        public Page<StadiumResponseDTO> findByCity (
+        public ResponseEntity<Page<StadiumResponseDTO>> findByCity (
                 @RequestParam String city,
-                @RequestParam int page,
-                @RequestParam int size) {
+                @PageableDefault(size =  10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+             return ResponseEntity.ok(stadiumService.listByCity(city, pageable));
 
-            return stadiumService.listByCity(city, PageRequest.of(page, size));
         }
 
         @GetMapping
-        public Page<StadiumResponseDTO> listStadiums ( @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size, Pageable pageable){
-            return stadiumService.list(pageable);
+        public ResponseEntity<Page<StadiumResponseDTO>> listStadiums (
+                @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(stadiumService.list(pageable));
         }
     }
 

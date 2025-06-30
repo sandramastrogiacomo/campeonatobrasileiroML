@@ -45,7 +45,7 @@ public class MatchController {
     return matchService.listMatchesByHomeClub(id, pageable);
     }
 
-    @GetMapping("/awayClub{id}")
+    @GetMapping("/awayClub/{id}")
     public Page<MatchResponseDTO> listMatchesByAwayClub(@PathVariable Long id, Pageable pageable) {
         return matchService.listMatchesByAwayClub(id, pageable);
     }

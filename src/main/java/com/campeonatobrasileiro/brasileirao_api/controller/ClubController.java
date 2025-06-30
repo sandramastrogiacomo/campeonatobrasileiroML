@@ -2,9 +2,13 @@ package com.campeonatobrasileiro.brasileirao_api.controller;
 
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.PageResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +26,7 @@ public class ClubController {
     }
 
     @PostMapping
-    public ClubResponseDTO createClub (@Valid @RequestBody ClubRequestDTO clubRequestDTO) {
+    public ClubResponseDTO createClub(@Valid @RequestBody ClubRequestDTO clubRequestDTO) {
         return clubService.createClub(clubRequestDTO);
     }
 
@@ -31,7 +35,7 @@ public class ClubController {
         return clubService.updateClub(id, clubRequestDTO);
     }
 
-    @DeleteMapping ("/{id}")
+    @DeleteMapping("/{id}")
     public void deactivateClub(@PathVariable Long id) {
         clubService.deactivateClub(id);
     }
@@ -48,11 +52,14 @@ public class ClubController {
     }
 
     @GetMapping
-    public Page<ClubResponseDTO> list(@RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String state,
-                                        @RequestParam(required = false) boolean active,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size){
-        return clubService.list(name, state, active, page, size);
+    public PageResponseDTO<ClubResponseDTO> listClubs(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) Boolean active,
+            Pageable pageable) {
+
+        Page<ClubResponseDTO> page = clubService.list(name, state, active, pageable);
+        PageResponseDTO<ClubResponseDTO> pageResponseDTO = new PageResponseDTO<>(page);
+        return ResponseEntity.ok(pageResponseDTO).getBody();
     }
 }

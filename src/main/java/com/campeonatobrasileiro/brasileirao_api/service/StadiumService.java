@@ -57,12 +57,6 @@ public class StadiumService {
         return entities.stream().map(StadiumMapperimpl::toResponseDTO).toList();
     }
 
-    public Page<StadiumResponseDTO>list(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
-        Page<StadiumEntity>  stadiums = stadiumRepository.findAll(pageable);
-        return stadiums.map(StadiumMapperimpl:: toResponseDTO);
-    }
-
     public Page<StadiumResponseDTO> list(Pageable pageable) {
         return stadiumRepository.findAll(pageable).map(StadiumMapperimpl::toResponseDTO);
     }

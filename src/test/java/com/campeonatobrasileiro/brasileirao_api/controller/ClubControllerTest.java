@@ -2,10 +2,6 @@ package com.campeonatobrasileiro.brasileirao_api.controller;
 
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
-import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
-import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
-import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,15 +10,15 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,9 +37,8 @@ public class ClubControllerTest {
    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private StadiumRepository stadiumRepository;
-    @Autowired
-    private ClubRepository clubRepository;
+    private PageableArgumentResolver pageableArgumentResolver;
+
 
     @Test
    void createClubSuccessfully() throws Exception {
@@ -53,28 +48,21 @@ public class ClubControllerTest {
        clubRequestDTO.setActive(true);
        clubRequestDTO.setStadiumId(1L);
 
-       StadiumEntity stadiumEntity = new StadiumEntity();
-       stadiumEntity.setId(1L);
-       stadiumEntity.setName("Allianz Park");
+       ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L,"Palmeiras","SP", true,
+               "Allianz Park");
 
-       ClubEntity clubEntity = new ClubEntity();
-       clubEntity.setId(1L);
-       clubEntity.setName("Palmeiras");
-       clubEntity.setState("SP");
-       clubEntity.setActive(true);
-       clubEntity.setStadium(stadiumEntity);
+       Mockito.when(clubService.createClub(any())).thenReturn(clubResponseDTO);
 
-       Mockito.when(stadiumRepository.findById(1L)).thenReturn(Optional.of(stadiumEntity));
-       Mockito.when(clubRepository.save(any(ClubEntity.class))).thenReturn(clubEntity);
+       mockMvc.perform(post("/clubs")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(objectMapper.writeValueAsString(clubRequestDTO)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(1L))
+               .andExpect(jsonPath("$.name").value("Palmeiras"))
+               .andExpect(jsonPath("$.state").value("SP"))
+               .andExpect(jsonPath("$.stadiumName").value("Allianz Park"));
 
-       ClubResponseDTO clubResponseDTO = clubService.createClub(clubRequestDTO);
-
-       assertNotNull(clubResponseDTO);
-       assertEquals("Palmeiras", clubResponseDTO.getName());
-       assertEquals("SP", clubResponseDTO.getState());
-       assertEquals("Allianz Park", clubResponseDTO.getStadiumName());
-
-       Mockito.verify(clubRepository, Mockito.times(1)).save(any(ClubEntity.class));
+       Mockito.verify(clubService, Mockito.times(1)).createClub(any());
 
    }
 
@@ -113,8 +101,10 @@ public class ClubControllerTest {
        clubRequestDTO.setName("Palmeiras");
        clubRequestDTO.setState("SP");
        clubRequestDTO.setActive(true);
+       clubRequestDTO.setStadiumId(1L);
 
-       ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Sociedade Esportiva Palmeiras", "SP", true, null);
+       ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Sociedade Esportiva Palmeiras",
+               "SP", true,"Allianz Park");
 
        Mockito.when(clubService.updateClub(eq(1L), any())).thenReturn(clubResponseDTO);
 
@@ -123,7 +113,9 @@ public class ClubControllerTest {
                .content(objectMapper.writeValueAsString(clubRequestDTO)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.name").value("Sociedade Esportiva Palmeiras"))
-               .andExpect(jsonPath("$.state").value("SP"));
+               .andExpect(jsonPath("$.state").value("SP"))
+               .andExpect(jsonPath("$.stadiumName").value("Allianz Park"));
+
        }
     @Test
     void deactivateClubSuccessfully() throws Exception {
@@ -134,12 +126,13 @@ public class ClubControllerTest {
    }
    @Test
     void listClubFilters() throws Exception {
-       ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true, null);
+        ClubResponseDTO clubResponseDTO = new ClubResponseDTO(1L, "Palmeiras", "SP", true, null);
+        List<ClubResponseDTO> content = List.of(clubResponseDTO);
 
-       PageImpl<ClubResponseDTO> page = new PageImpl<>(List.of(clubResponseDTO));
+        Pageable pageable = PageRequest.of(0, 10);
+        PageImpl<ClubResponseDTO> page = new PageImpl<>(content, pageable, 1);
 
-       Mockito.when(clubService.list("Palmeiras", "SP", true,0,10 ))
-               .thenReturn(page);
+       Mockito.when(clubService.list(eq("Palmeiras"), eq("SP"),eq( true), pageable)).thenReturn(page);
 
        mockMvc.perform(get("/clubs")
                .param("name", "Palmeiras")
@@ -148,6 +141,7 @@ public class ClubControllerTest {
                .param("page", "0")
                        .param("size", "10"))
                .andExpect(status().isOk())
+               .andExpect(jsonPath("$.totalElements").value(1))
                .andExpect(jsonPath("$.content[0].name").value("Palmeiras"));
    }
    @Test

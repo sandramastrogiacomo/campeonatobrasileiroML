@@ -3,6 +3,7 @@ package com.campeonatobrasileiro.brasileirao_api.service;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
+import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
 import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -65,17 +66,23 @@ public class ClubServiceTest {
     @Test
     public void createClub() {
         ClubRequestDTO clubRequestDTO = new ClubRequestDTO();
-
         clubRequestDTO.setName("Palmeiras");
         clubRequestDTO.setState("SP");
-        clubRequestDTO.setActive(true);
+        clubRequestDTO.setStadiumId(1L);
+
+        StadiumEntity stadiumMock = new StadiumEntity();
+        stadiumMock.setId(1L);
+        stadiumMock.setName("Allianz Park");
 
         ClubEntity clubEntity1 = new ClubEntity();
         clubEntity1.setId(1L);
         clubEntity1.setName("Palmeiras");
         clubEntity1.setState("SP");
         clubEntity1.setActive(true);
+        clubEntity1.setStadium(stadiumMock);
 
+
+        when(stadiumRepository.findById(1L)).thenReturn(Optional.of(stadiumMock));
         when(clubRepository.save(any(ClubEntity.class))).thenReturn(clubEntity1);
 
         ClubResponseDTO response = clubService.createClub(clubRequestDTO);
@@ -84,6 +91,9 @@ public class ClubServiceTest {
         assertEquals("Palmeiras", response.getName());
         assertEquals("SP", response.getState());
         assertEquals(true, response.getActive());
+        assertEquals("Allianz Park", response.getStadiumName());
+
+        verify(stadiumRepository, times(1)).findById(1L);
         verify(clubRepository, times(1)).save(any(ClubEntity.class));
 
     }
@@ -91,19 +101,22 @@ public class ClubServiceTest {
     @Test
     public void updateClub() {
         ClubRequestDTO clubRequestDTO = new ClubRequestDTO();
-
         clubRequestDTO.setName("Sociedade Esportiva Palmeiras");
         clubRequestDTO.setState("SP");
+        clubRequestDTO.setStadiumId(1L);
 
         ClubEntity entityExist = new ClubEntity();
         entityExist.setId(1L);
-
         entityExist.setName("Sociedade Esportiva Palmeiras");
         entityExist.setState("SP");
         entityExist.setActive(true);
 
-        when(clubRepository.findById(1L)).thenReturn(Optional.of(entityExist));
+        StadiumEntity stadiumMock = new StadiumEntity();
+        stadiumMock.setId(1L);
+        stadiumMock.setName("Allianz Park");
+        when(stadiumRepository.findById(1L)).thenReturn(Optional.of(stadiumMock));
 
+        when(clubRepository.findById(1L)).thenReturn(Optional.of(entityExist));
         when(clubRepository.save(any(ClubEntity.class))).thenReturn(entityExist);
 
         ClubResponseDTO response = clubService.updateClub(1L, clubRequestDTO);
@@ -140,11 +153,11 @@ public class ClubServiceTest {
        List<ClubEntity> list = List.of(clubEntity);
        Page<ClubEntity> clubPage = new PageImpl <>(list);
 
-        when(clubRepository.searchWithFilters("","SP",true,
-                PageRequest.of(0, 10, Sort.by("name").ascending())))
-                .thenReturn(clubPage);
+       Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
 
-        Page<ClubResponseDTO> result = clubService.list("","SP", true, 0,10);
+       when(clubRepository.searchWithFilters("","SP",true,pageable)).thenReturn(clubPage);
+
+        Page<ClubResponseDTO> result = clubService.list("","SP", true, pageable);
 
         assertEquals(1, result.getTotalElements());
         assertEquals("Palmeiras", result.getContent().get(0).getName());

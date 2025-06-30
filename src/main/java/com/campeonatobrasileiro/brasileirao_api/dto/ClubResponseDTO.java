@@ -1,6 +1,5 @@
 package com.campeonatobrasileiro.brasileirao_api.dto;
 
-import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
 import lombok.*;
 
 @Getter

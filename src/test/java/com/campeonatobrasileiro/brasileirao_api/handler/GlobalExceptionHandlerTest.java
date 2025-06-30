@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.hasItem;
 
 @WebMvcTest (ClubController.class)
 public class GlobalExceptionHandlerTest {
@@ -35,13 +36,17 @@ public class GlobalExceptionHandlerTest {
         ClubRequestDTO invalidClub = new ClubRequestDTO();
         invalidClub.setName("A");
         invalidClub.setState("");
+        invalidClub.setActive(null);
+        invalidClub.setStadiumId(null);
 
         mockMvc.perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidClub)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0]").exists())
-                .andExpect(jsonPath("$[0]").value(containsString("name")))
-                .andExpect(jsonPath("$[1]").value(containsString("state")));
+                .andExpect(jsonPath("$",hasItem(containsString("name"))))
+                .andExpect(jsonPath("$",hasItem(containsString("state"))))
+                .andExpect(jsonPath("$",hasItem(containsString("stadiumId"))))
+                .andExpect(jsonPath("$",hasItem(containsString("active"))));
+
     }
 }

@@ -8,9 +8,7 @@ import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
 import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.campeonatobrasileiro.brasileirao_api.mapper.ClubMapperImpl;
 
@@ -73,10 +71,10 @@ public class ClubService {
         return clubs.stream().map(ClubMapperImpl::toResponseDTO).collect(Collectors.toList());
     }
 
-    public Page<ClubResponseDTO> list(String name, String state, Boolean active, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+    public Page<ClubResponseDTO> list(String name, String state, Boolean active, Pageable pageable) {
+        Page<ClubEntity> page = clubRepository.searchWithFilters(name, state, active, pageable);
 
-       return clubRepository.searchWithFilters(name,state,active, pageable).map(ClubMapperImpl::toResponseDTO);
+        return page.map(ClubMapperImpl::toResponseDTO);
     }
 
 }
