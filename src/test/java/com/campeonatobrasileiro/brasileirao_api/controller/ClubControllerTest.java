@@ -132,7 +132,8 @@ public class ClubControllerTest {
         Pageable pageable = PageRequest.of(0, 10);
         PageImpl<ClubResponseDTO> page = new PageImpl<>(content, pageable, 1);
 
-       Mockito.when(clubService.list(eq("Palmeiras"), eq("SP"),eq( true), pageable)).thenReturn(page);
+       Mockito.when(clubService.list(eq("Palmeiras"), eq("SP"),eq( true),any(Pageable.class)))
+               .thenReturn(page);
 
        mockMvc.perform(get("/clubs")
                .param("name", "Palmeiras")
