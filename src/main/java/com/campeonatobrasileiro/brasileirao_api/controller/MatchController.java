@@ -1,5 +1,6 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubStatsResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.MatchService;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,4 +56,6 @@ public class MatchController {
     public Page<MatchResponseDTO> listMatchesByStadium(@PathVariable Long id, Pageable pageable) {
         return matchService.listMatchesByStadium (id,pageable);
     }
+
+
 }

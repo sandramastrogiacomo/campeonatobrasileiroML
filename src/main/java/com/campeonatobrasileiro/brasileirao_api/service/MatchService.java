@@ -1,5 +1,6 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubStatsResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
@@ -73,6 +74,16 @@ public class MatchService {
 
          public Page<MatchResponseDTO> listMatchesByStadium(Long id, Pageable pageable) {
         return matchRepository.findByStadiumId(id, pageable).map(MatchMapperImpl::toResponseDTO);
+         }
+
+         public ClubStatsResponseDTO getClubStats(Long clubId) {
+         ClubStatsResponseDTO clubStatsResponseDTO = matchRepository.getClubStats(clubId);
+
+         clubStatsResponseDTO.setGoalsDifference(clubStatsResponseDTO.getGoalsDifference() - clubStatsResponseDTO.getGoalsConceded());
+
+         clubStatsResponseDTO.setPoints(clubStatsResponseDTO.getGamesWon() * 3 + clubStatsResponseDTO.getGamesDraw());
+
+         return clubStatsResponseDTO;
          }
 
          }

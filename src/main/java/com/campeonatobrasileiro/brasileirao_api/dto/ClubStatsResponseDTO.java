@@ -20,6 +20,5 @@ public class ClubStatsResponseDTO {
     private int goalsConceded;
     private int goalsDifference;
     private int points;
-
-
+    
 }
