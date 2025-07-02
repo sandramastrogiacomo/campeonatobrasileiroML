@@ -27,11 +27,11 @@ public class MatchMapperImpl {
      MatchEntity matchEntity = new MatchEntity();
 
        matchEntity.setDateTime(matchRequestDTO.getDateTime());
+       matchEntity.setMatchDate(matchRequestDTO.getDateTime().toLocalDate());
        matchEntity.setHomeGoals(matchRequestDTO.getHomeGoals());
        matchEntity.setAwayGoals(matchRequestDTO.getAwayGoals());
        return matchEntity;
    }
 
 }
-
 

@@ -1,9 +1,7 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.ClubStatsResponseDTO;
-import com.campeonatobrasileiro.brasileirao_api.dto.PageResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.*;
+import com.campeonatobrasileiro.brasileirao_api.enums.RankingCriteria;
 import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.campeonatobrasileiro.brasileirao_api.service.MatchService;
 import jakarta.validation.Valid;
@@ -71,5 +69,24 @@ public class ClubController {
 
         ClubStatsResponseDTO clubStatsResponseDTO = matchService.getClubStats(id);
         return ResponseEntity.ok(clubStatsResponseDTO);
+    }
+
+    @GetMapping("/{id}/head-to-head")
+    public ResponseEntity< List<ClubHeadToHeadDTO>> getHeadToHead(@PathVariable Long id) {
+        return ResponseEntity.ok(matchService.getHeadToHeadStats(id));
+
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<ClubRankingResponseDTO>> getRanking() {
+        return ResponseEntity.ok(matchService.getRankingStats());
+
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<ClubRankingResponseDTO>> getClubRanking(
+            @RequestParam(defaultValue = "POINTS")RankingCriteria sortBy) {
+        List<ClubRankingResponseDTO> ranking = matchService.getClubRankingSortedBy(sortBy);
+        return ResponseEntity.ok(ranking);
     }
 }

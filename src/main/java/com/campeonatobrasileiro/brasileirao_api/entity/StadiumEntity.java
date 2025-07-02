@@ -18,10 +18,13 @@ public class StadiumEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String city;
 
+    @Column(nullable = false)
     private Integer capacity;
 
     @OneToMany (mappedBy = "stadium", fetch = FetchType.LAZY)

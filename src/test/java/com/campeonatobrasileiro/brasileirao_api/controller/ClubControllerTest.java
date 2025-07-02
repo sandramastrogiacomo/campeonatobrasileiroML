@@ -1,7 +1,9 @@
 package com.campeonatobrasileiro.brasileirao_api.controller;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRankingResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubStatsResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -151,6 +153,87 @@ public class ClubControllerTest {
 
        mockMvc.perform(get("/clubs/99")).andExpect(status().isNotFound());
    }
+
+    @Test
+    void getClubRankingSuccessfully() throws Exception {
+        List<ClubRankingResponseDTO> ranking = List.of(
+                new ClubRankingResponseDTO(1L, "Palmeiras", 10L, 6, 2, 2, 18, 10, 8, 20),
+                new ClubRankingResponseDTO(2L, "Flamengo", 10, 5, 3, 2, 15, 12, 3, 18)
+        );
+
+        Mockito.when(clubService.getClubRanking()).thenReturn(ranking);
+
+        mockMvc.perform(get("/clubs/ranking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].clubName").value("Palmeiras"))
+                .andExpect(jsonPath("$[0].points").value(20))
+                .andExpect(jsonPath("$[1].clubName").value("Flamengo"))
+                .andExpect(jsonPath("$[1].points").value(18));
+    }
+
+    @Test
+    void getClubStatsSuccessfully() throws Exception {
+        ClubStatsResponseDTO stats = new ClubStatsResponseDTO(
+                1L, "Palmeiras", 10, 6, 2, 2, 18, 10, 8, 20
+        );
+
+        Mockito.when(clubService.getClubStats(1L)).thenReturn(stats);
+
+        mockMvc.perform(get("/clubs/1/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clubName").value("Palmeiras"))
+                .andExpect(jsonPath("$.wins").value(6))
+                .andExpect(jsonPath("$.goalsFor").value(18))
+                .andExpect(jsonPath("$.points").value(20));
+    }
+
+    @Test
+    void getClubStatsAgainstOpponentsSuccessfully() throws Exception {
+        List<ClubStatsResponseDTO> statsList = List.of(
+                new ClubStatsResponseDTO(2L, "Flamengo", 4, 2, 1, 1, 7, 5, 2, 7),
+                new ClubStatsResponseDTO(3L, "Corinthians", 3, 1, 1, 1, 4, 4, 0, 4)
+        );
+
+        Mockito.when(clubService.getStatsAgainstOpponents(1L)).thenReturn(statsList);
+
+        mockMvc.perform(get("/clubs/1/stats/opponents"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].clubName").value("Flamengo"))
+                .andExpect(jsonPath("$[0].points").value(7))
+                .andExpect(jsonPath("$[1].clubName").value("Corinthians"))
+                .andExpect(jsonPath("$[1].points").value(4));
+    }
+
+
+    @Test
+    void getHeadToHeadStatsSuccessfully() throws Exception {
+        ClubStatsResponseDTO headToHead = new ClubStatsResponseDTO(
+                2L, "Flamengo", 5, 2, 2, 1, 8, 6, 2, 8
+        );
+
+        Mockito.when(clubService.getHeadToHeadStats(1L, 2L)).thenReturn(headToHead);
+
+        mockMvc.perform(get("/clubs/1/stats/opponent/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.clubName").value("Flamengo"))
+                .andExpect(jsonPath("$.wins").value(2))
+                .andExpect(jsonPath("$.goalsFor").value(8))
+                .andExpect(jsonPath("$.points").value(8));
+    }
+
+    @Test
+    void getClubStatsNotFound() throws Exception {
+        Mockito.when(clubService.getClubStats(99L))
+                .thenThrow(new EntityNotFoundException("Clube não encontrado!"));
+
+        mockMvc.perform(get("/clubs/99/stats"))
+                .andExpect(status().isNotFound());
+    }
+
+
+
 }
+
+
 
 

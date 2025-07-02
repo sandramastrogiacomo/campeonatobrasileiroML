@@ -1,5 +1,6 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.MatchResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.StadiumRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.StadiumResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
@@ -17,11 +18,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class StadiumServiceTest {
@@ -188,6 +193,105 @@ public class StadiumServiceTest {
 
         Mockito.verify(stadiumRepository).findByCityContainingIgnoreCase(city, pageable);
     }
+
+    @Test
+    void listMatchesByDateSuccessfully() throws Exception {
+        MatchResponseDTO match = new MatchResponseDTO(
+                1L,
+                LocalDateTime.of(2024, 7, 1, 19, 0),
+                "Palmeiras",
+                "Flamengo",
+                "Allianz Park",
+                2,
+                1
+        );
+        List<MatchResponseDTO> matches = List.of(match);
+
+        Mockito.when(matchService.listMatchesByDate(Mockito.eq(LocalDate.of(2024, 7, 1))))
+                .thenReturn(matches);
+
+        mockMvc.perform(get("/matches/date")
+                        .param("date", "2024-07-01"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].homeClub").value("Palmeiras"));
+    }
+
+
+    @Test
+    void listMatchesByDateRangeSuccessfully() throws Exception {
+        MatchResponseDTO match = new MatchResponseDTO(
+                1L,
+                LocalDateTime.of(2024, 7, 1, 19, 0),
+                "Palmeiras",
+                "Flamengo",
+                "Allianz Park",
+                2,
+                1
+        );
+        List<MatchResponseDTO> matches = List.of(match);
+
+        Mockito.when(matchService.listMatchesByDateRange(
+                        LocalDate.of(2024, 6, 30),
+                        LocalDate.of(2024, 7, 2)))
+                .thenReturn(matches);
+
+        mockMvc.perform(get("/matches/date-range")
+                        .param("start", "2024-06-30")
+                        .param("end", "2024-07-02"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].stadium").value("Allianz Park"));
+    }
+
+    @Test
+    void listMatchesByCitySuccessfully() throws Exception {
+        MatchResponseDTO match = new MatchResponseDTO(
+                1L,
+                LocalDateTime.now(),
+                "Palmeiras",
+                "Flamengo",
+                "Allianz Park",
+                2,
+                1
+        );
+
+        List<MatchResponseDTO> matches = List.of(match);
+
+        Mockito.when(matchService.listMatchesByStadiumCity("São Paulo")).thenReturn(matches);
+
+        mockMvc.perform(get("/matches/city/São Paulo"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].stadium").value("Allianz Park"));
+    }
+
+    @Test
+    void listMatchesWithFiltersSuccessfully() throws Exception {
+        MatchResponseDTO match = new MatchResponseDTO(
+                1L,
+                LocalDateTime.of(2024, 7, 1, 19, 0),
+                "Palmeiras",
+                "Flamengo",
+                "Allianz Park",
+                2,
+                1
+        );
+
+        List<MatchResponseDTO> matches = List.of(match);
+
+        Mockito.when(matchService.filterMatches(
+                Mockito.eq(1L), Mockito.eq(1L),
+                Mockito.eq(LocalDate.of(2024, 6, 30)),
+                Mockito.eq(LocalDate.of(2024, 7, 2))
+        )).thenReturn(matches);
+
+        mockMvc.perform(get("/matches/filter")
+                        .param("clubId", "1")
+                        .param("stadiumId", "1")
+                        .param("startDate", "2024-06-30")
+                        .param("endDate", "2024-07-02"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].homeClub").value("Palmeiras"));
+    }
+
 
 }
 
