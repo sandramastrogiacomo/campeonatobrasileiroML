@@ -18,27 +18,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler (MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handlerValidationErrors (MethodArgumentNotValidException ex) {
-        List<String> erros = ex.getBindingResult().getFieldErrors().stream()
-                .map(this::formatarMensagem)
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(this::messageFormat)
                 .collect(Collectors.toList());
-        return ResponseEntity.badRequest().body(erros);
+        return ResponseEntity.badRequest().body(errors);
     }
-
-        @ExceptionHandler(EntityNotFoundException.class)
-                public ResponseEntity<String> handleEntityNotFound (EntityNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Recurso não encontrado: " + ex.getMessage());
-        }
 
         @ExceptionHandler (Exception.class)
     public ResponseEntity <Map<String, String>> handlerGenericException (Exception ex){
-        Map<String,String> erro = new HashMap<>();
-        erro.put("Erro interno inesperado", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(erro);
+        Map<String,String> error = new HashMap<>();
+        error.put("Erro interno inesperado", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
 
-        private String formatarMensagem(FieldError fieldError){
+        private String messageFormat(FieldError fieldError){
         return  fieldError.getField() + ": " + fieldError.getDefaultMessage();
+        }
+
+        @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlerEntityNotFound (EntityNotFoundException ex){
+        Map<String,String> error = new HashMap<>();
+        error.put("Erro", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
 
     }
