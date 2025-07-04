@@ -24,12 +24,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-        @ExceptionHandler(EntityNotFoundException.class)
-                public ResponseEntity<String> handleEntityNotFound (EntityNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Recurso não encontrado: " + ex.getMessage());
-        }
-
         @ExceptionHandler (Exception.class)
     public ResponseEntity <Map<String, String>> handlerGenericException (Exception ex){
         Map<String,String> error = new HashMap<>();
@@ -39,6 +33,13 @@ public class GlobalExceptionHandler {
 
         private String messageFormat(FieldError fieldError){
         return  fieldError.getField() + ": " + fieldError.getDefaultMessage();
+        }
+
+        @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlerEntityNotFound (EntityNotFoundException ex){
+        Map<String,String> error = new HashMap<>();
+        error.put("Erro", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
 
     }

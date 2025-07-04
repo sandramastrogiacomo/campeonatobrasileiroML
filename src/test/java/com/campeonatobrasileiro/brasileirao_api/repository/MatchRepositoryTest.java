@@ -6,7 +6,6 @@ import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@AutoConfigureTestDatabase
 @Transactional
 public class MatchRepositoryTest {
 
@@ -32,7 +30,7 @@ public class MatchRepositoryTest {
     private ClubRepository clubRepository;
 
     @Test
-    void testFindByStadium_CityContainingIgnoreCase() {
+    void testFindByStadiumCityContainingIgnoreCase() {
         StadiumEntity stadium = StadiumEntity.builder()
                 .id(1L)
                 .name("Stadium test")
@@ -57,7 +55,7 @@ public class MatchRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        Page<MatchEntity> result = matchRepository.findByStadium_CityContainingIgnoreCase(stadium.getCity(), pageable);
+        Page<MatchEntity> result = matchRepository.findByStadiumCityContainingIgnoreCase(stadium.getCity(), pageable);
 
         assertEquals(1, result.getTotalElements());
         assertEquals ("São Paulo", result.getContent().get(0).getStadium().getCity());

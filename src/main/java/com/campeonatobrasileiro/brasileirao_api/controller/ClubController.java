@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping ("/clubs")
+@RequestMapping("/clubs")
 public class ClubController {
-
 
     private final ClubService clubService;
     private final MatchService matchService;
@@ -23,7 +22,6 @@ public class ClubController {
     public ClubController(ClubService clubService, MatchService matchService) {
         this.clubService = clubService;
         this.matchService = matchService;
-
     }
 
     @PostMapping
@@ -48,8 +46,7 @@ public class ClubController {
 
     @GetMapping("/name/{name}")
     public List<ClubResponseDTO> findByNameContainingIgnoreCase(@PathVariable String name) {
-        return clubService.findByNameContainigIgnoreCase(name);
-
+        return clubService.findByNameContainingIgnoreCase(name);
     }
 
     @GetMapping
@@ -58,35 +55,33 @@ public class ClubController {
             @RequestParam(required = false) String state,
             @RequestParam(required = false) Boolean active,
             Pageable pageable) {
-
         Page<ClubResponseDTO> page = clubService.list(name, state, active, pageable);
-        PageResponseDTO<ClubResponseDTO> pageResponseDTO = new PageResponseDTO<>(page);
-        return ResponseEntity.ok(pageResponseDTO).getBody();
+        return new PageResponseDTO<>(page);
     }
 
-    @GetMapping("/clubs/{id}/stats")
+    @GetMapping("/{id}/stats")
     public ResponseEntity<ClubStatsResponseDTO> getClubsStats(@PathVariable Long id) {
-
-        ClubStatsResponseDTO clubStatsResponseDTO = matchService.getClubStats(id);
-        return ResponseEntity.ok(clubStatsResponseDTO);
+        return ResponseEntity.ok(clubService.getClubStats(id));
     }
 
-    @GetMapping("/{id}/head-to-head")
-    public ResponseEntity< List<ClubHeadToHeadDTO>> getHeadToHead(@PathVariable Long id) {
-        return ResponseEntity.ok(matchService.getHeadToHeadStats(id));
-
+    @GetMapping("/{id}/stats/opponents")
+    public ResponseEntity<List<ClubStatsResponseDTO>> getStatsAgainstOpponents(@PathVariable Long id) {
+        return ResponseEntity.ok(clubService.getStatsAgainstOpponents(id));
     }
 
-    @GetMapping("/ranking")
-    public ResponseEntity<List<ClubRankingResponseDTO>> getRanking() {
-        return ResponseEntity.ok(matchService.getRankingStats());
-
+    @GetMapping("/{clubId}/stats/opponent/{opponentId}")
+    public ResponseEntity<List<ClubHeadToHeadDTO>>getHeadToHeadStats(@PathVariable Long clubId,
+                                                                         @PathVariable Long opponentId) {
+        return ResponseEntity.ok(matchService.getHeadToHeadStats(clubId, opponentId));
     }
 
     @GetMapping("/ranking")
     public ResponseEntity<List<ClubRankingResponseDTO>> getClubRanking(
-            @RequestParam(defaultValue = "POINTS")RankingCriteria sortBy) {
-        List<ClubRankingResponseDTO> ranking = matchService.getClubRankingSortedBy(sortBy);
-        return ResponseEntity.ok(ranking);
+            @RequestParam(required = false) RankingCriteria sortBy) {
+        if (sortBy != null) {
+            return ResponseEntity.ok(clubService.getClubRankingSortedBy(sortBy));
+        }
+
+        return ResponseEntity.ok(clubService.getClubRanking());
     }
 }

@@ -144,6 +144,7 @@ public class MatchControllerTest {
 
     @Test
     void deletedMatchById () throws Exception {
+        Mockito.doNothing().when(matchService).deleteMatch(1L);
 
         mockMvc.perform(delete("/matches/1"))
                 .andExpect(status().isNoContent());
@@ -169,9 +170,12 @@ public class MatchControllerTest {
         mockMvc.perform(get("/matches/date")
                         .param("date", "2024-07-01"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].homeClub").value("Palmeiras"));
+                .andExpect(jsonPath("$[0].stadium").value("Allianz Park"))
+                .andExpect(jsonPath("$[0].homeClub").value("Palmeiras"))
+                .andExpect(jsonPath("$[0].awayClub").value("Flamengo"))
+                .andExpect(jsonPath("$[0].homeGoals").value(2))
+                .andExpect(jsonPath("$[0].awayGoals").value(1));
     }
-
 
     @Test
     void listMatchesByDateRangeSuccessfully() throws Exception {
@@ -185,17 +189,21 @@ public class MatchControllerTest {
                 1
         );
         List<MatchResponseDTO> matches = List.of(match);
+        PageImpl<MatchResponseDTO> page = new PageImpl<>(matches);
 
         Mockito.when(matchService.listMatchesByDateRange(
                         LocalDate.of(2024, 6, 30),
-                        LocalDate.of(2024, 7, 2)))
-                .thenReturn(matches);
+                        LocalDate.of(2024, 7, 2),
+                        any(Pageable.class)))
+                        .thenReturn(page);
 
-        mockMvc.perform(get("/matches/date-range")
-                        .param("start", "2024-06-30")
-                        .param("end", "2024-07-02"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].stadium").value("Allianz Park"));
+        mockMvc.perform(get("/matches/search-by-date")
+                        .param("startDate", "2024-06-30")
+                        .param("endDate", "2024-07-02")
+                        .param("page","0")
+                        .param("size","10"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.content[0].stadium").value("Allianz Park"));
     }
 
     @Test
@@ -211,12 +219,17 @@ public class MatchControllerTest {
         );
 
         List<MatchResponseDTO> matches = List.of(match);
+        PageImpl<MatchResponseDTO> page = new PageImpl<>(matches);
 
-        Mockito.when(matchService.listMatchesByStadiumCity("São Paulo")).thenReturn(matches);
+        Mockito.when(matchService.listMatchesByStadiumCity(Mockito.eq("São Paulo"),any(Pageable.class)))
+                .thenReturn(page);
 
-        mockMvc.perform(get("/matches/city/São Paulo"))
+        mockMvc.perform(get("/matches/search-by-stadium-city")
+                        .param("city", "São Paulo")
+                        .param("page","0")
+                        .param("size","10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].stadium").value("Allianz Park"));
+                .andExpect(jsonPath("$.content[0].stadium").value("Allianz Park"));
     }
 
     @Test
@@ -230,22 +243,25 @@ public class MatchControllerTest {
                 2,
                 1
         );
-
         List<MatchResponseDTO> matches = List.of(match);
+        PageImpl<MatchResponseDTO> page = new PageImpl<>(matches);
 
-        Mockito.when(matchService.filterMatches(
+        Mockito.when(matchService.searchMatchesWithFilters(
                 Mockito.eq(1L), Mockito.eq(1L),
                 Mockito.eq(LocalDate.of(2024, 6, 30)),
-                Mockito.eq(LocalDate.of(2024, 7, 2))
-        )).thenReturn(matches);
+                Mockito.eq(LocalDate.of(2024, 7, 2)),
+                any(Pageable.class)))
+                .thenReturn(page);
 
-        mockMvc.perform(get("/matches/filter")
+        mockMvc.perform(get("/matches/search")
                         .param("clubId", "1")
                         .param("stadiumId", "1")
                         .param("startDate", "2024-06-30")
-                        .param("endDate", "2024-07-02"))
+                        .param("endDate", "2024-07-02")
+                        .param("page","0")
+                        .param("size","10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].homeClub").value("Palmeiras"));
+                .andExpect(jsonPath("$.content[0].homeClub").value("Palmeiras"));
     }
 
 

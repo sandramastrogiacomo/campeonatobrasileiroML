@@ -40,5 +40,18 @@ public class MatchEntity {
     private Integer homeGoals;
     private Integer awayGoals;
 
+    public MatchEntity(Long id, LocalDateTime dateTime, ClubEntity homeClub,
+                       ClubEntity awayClub, StadiumEntity stadium, Integer homeGoals, Integer awayGoals) {
+        this.id = id;
+        this.dateTime = dateTime;
+        this.matchDate = dateTime.toLocalDate();
+        this.homeClub = homeClub;
+        this.awayClub = awayClub;
+        this.stadium = stadium;
+        this.homeGoals = homeGoals;
+        this.awayGoals = awayGoals;
+
+    }
+
 }
 

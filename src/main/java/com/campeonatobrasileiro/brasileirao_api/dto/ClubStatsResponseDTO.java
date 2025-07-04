@@ -12,13 +12,28 @@ import lombok.Setter;
 public class ClubStatsResponseDTO {
     private Long clubId;
     private String clubName;
-    private int gamesPlayed;
-    private int gamesWon;
-    private int gamesLost;
-    private int gamesDraw;
-    private int goalsScored;
-    private int goalsConceded;
-    private int goalsDifference;
-    private int points;
-    
+    private Long gamesPlayed;
+    private Long gamesWon;
+    private Long gamesLost;
+    private Long gamesDraw;
+    private Long goalsScored;
+    private Long goalsConceded;
+
+
+    private Long goalsDifference;
+    private Long points;
+
+    public ClubStatsResponseDTO(Long clubId, String clubName, Long gamesPlayed, Long gamesWon, Long gamesLost,
+                                Long gamesDraw, Long goalsScored, Long goalsConceded) {
+        this.clubId = clubId;
+        this.clubName = clubName;
+        this.gamesPlayed = gamesPlayed;
+        this.gamesWon = gamesWon;
+        this.gamesLost = gamesLost;
+        this.gamesDraw = gamesDraw;
+        this.goalsScored = goalsScored;
+        this.goalsConceded = goalsConceded;
+    }
+
+
 }

@@ -63,12 +63,12 @@ public class MatchController {
     }
 
     @GetMapping("/search-by-date")
-    public ResponseEntity<PageResponseDTO<MatchResponseDTO>> searchNatchesByDate(
+    public ResponseEntity<PageResponseDTO<MatchResponseDTO>> searchMatchesByDate(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
 
-        Page<MatchResponseDTO> page = matchService.findMatchesByDateRanger(startDate, endDate, pageable);
+        Page<MatchResponseDTO> page = matchService.listMatchesByDateRange (startDate, endDate, pageable);
         PageResponseDTO<MatchResponseDTO> responseDTO = new PageResponseDTO<>(page);
         return ResponseEntity.ok(responseDTO);
     }

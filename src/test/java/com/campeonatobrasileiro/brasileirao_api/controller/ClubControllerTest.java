@@ -8,13 +8,14 @@ import com.campeonatobrasileiro.brasileirao_api.service.ClubService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ClubController.class)
 public class ClubControllerTest {
 
-   @Autowired
+   @Mock
     private MockMvc mockMvc;
 
-   @MockBean
+   @Mock
     private ClubService clubService;
 
-   @Autowired
+   @Mock
     private ObjectMapper objectMapper;
-    @Autowired
-    private PageableArgumentResolver pageableArgumentResolver;
 
 
     @Test
@@ -87,7 +86,7 @@ public class ClubControllerTest {
        ClubResponseDTO clubResponseDTO= new ClubResponseDTO(1L, "Palmeiras", "SP", true,null);
         List<ClubResponseDTO> list = List.of(clubResponseDTO);
 
-        Mockito.when(clubService.findByNameContainigIgnoreCase(name)).thenReturn(list);
+        Mockito.when(clubService.findByNameContainingIgnoreCase(name)).thenReturn(list);
 
         mockMvc.perform(get("/clubs/name/{name}", name))
                 .andExpect(status().isOk())
@@ -95,7 +94,7 @@ public class ClubControllerTest {
                 .andExpect(jsonPath("$[0].state").value("SP"))
                 .andExpect(jsonPath("$[0].active").value(true));
 
-        Mockito.verify(clubService, Mockito.times(1)).findByNameContainigIgnoreCase(name);
+        Mockito.verify(clubService, Mockito.times(1)).findByNameContainingIgnoreCase(name);
     }
    @Test
     void updateClubSuccessfully() throws Exception {
@@ -157,8 +156,10 @@ public class ClubControllerTest {
     @Test
     void getClubRankingSuccessfully() throws Exception {
         List<ClubRankingResponseDTO> ranking = List.of(
-                new ClubRankingResponseDTO(1L, "Palmeiras", 10L, 6, 2, 2, 18, 10, 8, 20),
-                new ClubRankingResponseDTO(2L, "Flamengo", 10, 5, 3, 2, 15, 12, 3, 18)
+                new ClubRankingResponseDTO(1L, "Palmeiras", 10L, 6L,
+                        2L, 2L, 18L, 10L, 8L, 20L),
+                new ClubRankingResponseDTO(2L, "Flamengo", 10L, 5L, 3L,
+                        2L, 15L, 12L, 3L, 18L)
         );
 
         Mockito.when(clubService.getClubRanking()).thenReturn(ranking);
@@ -174,7 +175,8 @@ public class ClubControllerTest {
     @Test
     void getClubStatsSuccessfully() throws Exception {
         ClubStatsResponseDTO stats = new ClubStatsResponseDTO(
-                1L, "Palmeiras", 10, 6, 2, 2, 18, 10, 8, 20
+                1L, "Palmeiras", 10L, 6L, 2L, 2L,
+                18L, 10L, 8L, 20L
         );
 
         Mockito.when(clubService.getClubStats(1L)).thenReturn(stats);
@@ -182,16 +184,18 @@ public class ClubControllerTest {
         mockMvc.perform(get("/clubs/1/stats"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.clubName").value("Palmeiras"))
-                .andExpect(jsonPath("$.wins").value(6))
-                .andExpect(jsonPath("$.goalsFor").value(18))
+                .andExpect(jsonPath("$.gamesWon").value(6))
+                .andExpect(jsonPath("$.goalsScored").value(18))
                 .andExpect(jsonPath("$.points").value(20));
     }
 
     @Test
     void getClubStatsAgainstOpponentsSuccessfully() throws Exception {
         List<ClubStatsResponseDTO> statsList = List.of(
-                new ClubStatsResponseDTO(2L, "Flamengo", 4, 2, 1, 1, 7, 5, 2, 7),
-                new ClubStatsResponseDTO(3L, "Corinthians", 3, 1, 1, 1, 4, 4, 0, 4)
+                new ClubStatsResponseDTO(2L, "Flamengo", 4L, 2L, 1L,
+                        1L, 7L, 5L, 2L, 7L),
+                new ClubStatsResponseDTO(3L, "Corinthians", 3L, 1L, 1L,
+                        1L, 4L, 4L, 0L, 4L)
         );
 
         Mockito.when(clubService.getStatsAgainstOpponents(1L)).thenReturn(statsList);
@@ -208,7 +212,8 @@ public class ClubControllerTest {
     @Test
     void getHeadToHeadStatsSuccessfully() throws Exception {
         ClubStatsResponseDTO headToHead = new ClubStatsResponseDTO(
-                2L, "Flamengo", 5, 2, 2, 1, 8, 6, 2, 8
+                2L, "Flamengo", 5L, 2L, 2L, 1L, 8L,
+                6L, 2L, 8L
         );
 
         Mockito.when(clubService.getHeadToHeadStats(1L, 2L)).thenReturn(headToHead);
@@ -216,8 +221,8 @@ public class ClubControllerTest {
         mockMvc.perform(get("/clubs/1/stats/opponent/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.clubName").value("Flamengo"))
-                .andExpect(jsonPath("$.wins").value(2))
-                .andExpect(jsonPath("$.goalsFor").value(8))
+                .andExpect(jsonPath("$.gamesWon").value(2))
+                .andExpect(jsonPath("$.goalsScored").value(8))
                 .andExpect(jsonPath("$.points").value(8));
     }
 
@@ -230,8 +235,18 @@ public class ClubControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void findClubByNameReturnEmptyList() throws Exception {
+        String name = "Inexistente";
 
+        Mockito.when(clubService.findByNameContainingIgnoreCase(name)).thenReturn(List.of());
 
+        mockMvc.perform(get("/clubs/name/{name}", name))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        Mockito.verify(clubService, Mockito.times(1)).findByNameContainingIgnoreCase(name);
+    }
 }
 
 

@@ -1,9 +1,12 @@
 package com.campeonatobrasileiro.brasileirao_api.service;
 
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubRankingResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubRequestDTO;
 import com.campeonatobrasileiro.brasileirao_api.dto.ClubResponseDTO;
+import com.campeonatobrasileiro.brasileirao_api.dto.ClubStatsResponseDTO;
 import com.campeonatobrasileiro.brasileirao_api.entity.ClubEntity;
 import com.campeonatobrasileiro.brasileirao_api.entity.StadiumEntity;
+import com.campeonatobrasileiro.brasileirao_api.enums.RankingCriteria;
 import com.campeonatobrasileiro.brasileirao_api.repository.ClubRepository;
 import com.campeonatobrasileiro.brasileirao_api.repository.StadiumRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,10 +23,12 @@ public class ClubService {
 
     private final ClubRepository clubRepository;
     private final StadiumRepository stadiumRepository;
+    private final MatchService matchService;
 
-    public ClubService(ClubRepository clubRepository, StadiumRepository stadiumRepository) {
-    this.clubRepository = clubRepository;
+    public ClubService(ClubRepository clubRepository, StadiumRepository stadiumRepository, MatchService matchService) {
+        this.clubRepository = clubRepository;
         this.stadiumRepository = stadiumRepository;
+        this.matchService = matchService;
     }
 
     public ClubResponseDTO createClub(ClubRequestDTO clubRequestDTO) {
@@ -66,7 +71,7 @@ public class ClubService {
         return ClubMapperImpl.toResponseDTO(clubEntity);
     }
 
-    public List<ClubResponseDTO> findByNameContainigIgnoreCase(String name) {
+    public List<ClubResponseDTO> findByNameContainingIgnoreCase(String name) {
         List<ClubEntity> clubs = clubRepository.findByNameContainingIgnoreCase(name);
         return clubs.stream().map(ClubMapperImpl::toResponseDTO).collect(Collectors.toList());
     }
@@ -75,6 +80,26 @@ public class ClubService {
         Page<ClubEntity> page = clubRepository.searchWithFilters(name, state, active, pageable);
 
         return page.map(ClubMapperImpl::toResponseDTO);
+    }
+
+    public List<ClubRankingResponseDTO>getClubRanking(){
+        return List.of();
+    }
+
+    public ClubStatsResponseDTO getClubStats(Long id) {
+        return null;
+    }
+
+    public List<ClubStatsResponseDTO>getStatsAgainstOpponents(Long id){
+        return List.of();
+    }
+
+    public ClubStatsResponseDTO getHeadToHeadStats(Long clubId, Long opponentId){
+        return null;
+    }
+
+    public List<ClubRankingResponseDTO> getClubRankingSortedBy(RankingCriteria rankingCriteria){
+        return matchService.getClubRankingSortedBy(rankingCriteria);
     }
 
 }

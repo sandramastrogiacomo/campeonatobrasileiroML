@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
@@ -24,112 +25,130 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final ClubRepository clubRepository;
     private final StadiumRepository stadiumRepository;
-    private Long stadiumId;
 
-    public MatchService(
-            MatchRepository matchRepository,
-            ClubRepository clubRepository,
-            StadiumRepository stadiumRepository) {
+    public MatchService(MatchRepository matchRepository,
+                        ClubRepository clubRepository,
+                        StadiumRepository stadiumRepository) {
         this.matchRepository = matchRepository;
         this.clubRepository = clubRepository;
         this.stadiumRepository = stadiumRepository;
     }
 
-    public MatchResponseDTO registerMatch(MatchRequestDTO matchRequestDTO) {
-        ClubEntity homeClub = clubRepository.findById(matchRequestDTO.getHomeClubId())
+    public MatchResponseDTO registerMatch(MatchRequestDTO dto) {
+        ClubEntity home = clubRepository.findById(dto.getHomeClubId())
                 .orElseThrow(() -> new EntityNotFoundException("Clube mandante não encontrado!"));
-        ClubEntity awayClub = clubRepository.findById(matchRequestDTO.getAwayClubId())
-                .orElseThrow(() -> new EntityNotFoundException("Visitante não encontrado!"));
-        StadiumEntity stadium
-                = stadiumRepository.findById(matchRequestDTO.getStadiumId())
+        ClubEntity away = clubRepository.findById(dto.getAwayClubId())
+                .orElseThrow(() -> new EntityNotFoundException("Clube visitante não encontrado!"));
+        StadiumEntity stadium = stadiumRepository.findById(dto.getStadiumId())
                 .orElseThrow(() -> new EntityNotFoundException("Estádio não encontrado!"));
 
-        MatchEntity matchEntity = MatchMapperImpl.toMatchEntity(matchRequestDTO);
+        MatchEntity entity = MatchMapperImpl.toMatchEntity(dto);
+        entity.setHomeClub(home);
+        entity.setAwayClub(away);
+        entity.setStadium(stadium);
 
-        matchEntity.setHomeClub(homeClub);
-        matchEntity.setAwayClub(awayClub);
-        matchEntity.setStadium(stadium);
-
-        return MatchMapperImpl.toResponseDTO(matchRepository.save(matchEntity));
-
+        return MatchMapperImpl.toResponseDTO(matchRepository.save(entity));
     }
 
     public void deleteMatch(Long id) {
-        MatchEntity matchEntity = matchRepository.findById(id)
+        MatchEntity match = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Partida inexistente!"));
-        matchRepository.delete(matchEntity);
+        matchRepository.delete(match);
     }
 
     public MatchResponseDTO findById(Long id) {
-        MatchEntity matchEntity = matchRepository.findById(id)
+        MatchEntity match = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Partida inexistente!"));
-        return MatchMapperImpl.toResponseDTO(matchEntity);
+        return MatchMapperImpl.toResponseDTO(match);
     }
 
     public Page<MatchResponseDTO> listMatches(Pageable pageable) {
-        return matchRepository.findAll(pageable).map(MatchMapperImpl::toResponseDTO);
+        return matchRepository.findAll(pageable)
+                .map(MatchMapperImpl::toResponseDTO);
     }
 
     public Page<MatchResponseDTO> listMatchesByHomeClub(Long id, Pageable pageable) {
-        return matchRepository.findByHomeClubId(id, pageable).map(MatchMapperImpl::toResponseDTO);
+        return matchRepository.findByHomeClubId(id, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
     }
 
     public Page<MatchResponseDTO> listMatchesByAwayClub(Long id, Pageable pageable) {
-        return matchRepository.findByAwayClubId(id, pageable).map(MatchMapperImpl::toResponseDTO);
+        return matchRepository.findByAwayClubId(id, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
     }
 
     public Page<MatchResponseDTO> listMatchesByStadium(Long id, Pageable pageable) {
-        return matchRepository.findByStadiumId(id, pageable).map(MatchMapperImpl::toResponseDTO);
+        return matchRepository.findByStadiumId(id, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
+    }
+
+    public List<MatchResponseDTO> listMatchesByDate(LocalDate date) {
+        return matchRepository.findByMatchDate(date)
+                .stream()
+                .map(MatchMapperImpl::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Page<MatchResponseDTO> listMatchesByDateRange(LocalDate start, LocalDate end, Pageable pageable) {
+        return matchRepository.findByMatchDateBetween(start, end, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
+    }
+
+    public Page<MatchResponseDTO> listMatchesByStadiumCity(String city, Pageable pageable) {
+        return matchRepository.findByStadiumCityContainingIgnoreCase(city, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
+    }
+
+    public Page<MatchResponseDTO> searchMatchesWithFilters(Long clubId, Long stadiumId, LocalDate start, LocalDate end, Pageable pageable) {
+        return matchRepository.searchWithFilters(clubId, stadiumId, start, end, pageable)
+                .map(MatchMapperImpl::toResponseDTO);
     }
 
     public ClubStatsResponseDTO getClubStats(Long clubId) {
-        ClubStatsResponseDTO clubStatsResponseDTO = matchRepository.getClubStats(clubId);
-
-        clubStatsResponseDTO.setGoalsDifference(clubStatsResponseDTO.getGoalsDifference() - clubStatsResponseDTO.getGoalsConceded());
-
-        clubStatsResponseDTO.setPoints(clubStatsResponseDTO.getGamesWon() * 3 + clubStatsResponseDTO.getGamesDraw());
-
-        return clubStatsResponseDTO;
+        ClubStatsResponseDTO dto = matchRepository.getClubStats(clubId);
+        dto.setGoalsDifference(dto.getGoalsScored() - dto.getGoalsConceded());
+        dto.setPoints(dto.getGamesWon() * 3 + dto.getGamesDraw());
+        return dto;
     }
 
-    public List<ClubHeadToHeadDTO> getHeadToHeadStats(Long clubId) {
-        List<ClubHeadToHeadDTO> headToHeadList = matchRepository.getHeadToHeadStats(clubId);
+    public List<ClubStatsResponseDTO> getStatsAgainstOpponents(Long clubId) {
+        return matchRepository.getStatsAgainstOpponents(clubId)
+                .stream()
+                .map(dto -> {
+                    dto.setGoalsDifference(dto.getGoalsScored() - dto.getGoalsConceded());
+                    dto.setPoints(dto.getGamesWon() * 3 + dto.getGamesDraw());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
-        for (ClubHeadToHeadDTO headToHeadDTO : headToHeadList) {
-            int goalsDifference = headToHeadDTO.getGoalsScored() - headToHeadDTO.getGoalsConceded();
-            int points = headToHeadDTO.getGamesWon() * 3 + headToHeadDTO.getGamesDraw();
+    public List<ClubHeadToHeadDTO> getHeadToHeadStats(Long clubId, Long opponentId) {
+        List<ClubHeadToHeadDTO> list = matchRepository.getDirectHeadToHeadStats(clubId, opponentId);
 
-            headToHeadDTO.setGoalDifference(goalsDifference);
-            headToHeadDTO.setPoints(points);
+        for (ClubHeadToHeadDTO dto : list) {
+        dto.setGoalDifference(dto.getGoalsScored() - dto.getGoalsConceded());
+        dto.setPoints(dto.getGamesWon() * 3 + dto.getGamesDraw());
         }
-        return headToHeadList;
+        return list;
+    }
+
+
+    public List<ClubHeadToHeadDTO> getHeadToHeadStats(Long clubId) {
+        List<ClubHeadToHeadDTO> list = matchRepository.getHeadToHeadStats(clubId);
+        for (ClubHeadToHeadDTO dto : list) {
+            dto.setGoalDifference(dto.getGoalsScored() - dto.getGoalsConceded());
+            dto.setPoints(dto.getGamesWon() * 3 + dto.getGamesDraw());
+        }
+        return list;
     }
 
     public List<ClubRankingResponseDTO> getRankingStats() {
         return matchRepository.getClubRanking();
     }
 
-    public Page<MatchResponseDTO> findMatchesByDateRanger(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        return matchRepository.findByMatchDateBetween(startDate, endDate, pageable).map(MatchMapperImpl::toResponseDTO);
-    }
-
-    public Page<MatchResponseDTO> listMatchesByStadiumCity(String city, Pageable pageable) {
-        return matchRepository.findByStadiumCityContainingIgnoreCase(city, pageable).map(MatchMapperImpl::toResponseDTO);
-    }
-
-    public Page<MatchResponseDTO> searchMatchesWithFilters(Long clubId, Long stadiumId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        return matchRepository.searchWithFilters(clubId, this.stadiumId, startDate, endDate, pageable)
-                .map(MatchMapperImpl::toResponseDTO);
-    }
-
-    public List<ClubHeadToHeadDTO> getDirectHeadToHeadStats(Long club1Id, Long club2Id) {
-        return matchRepository.getDirectHeadToHeadStats(club1Id, club2Id);
-    }
-
-    public List<ClubRankingResponseDTO> getClubRankingSortedBy(RankingCriteria sortBy) {
+    public List<ClubRankingResponseDTO> getClubRankingSortedBy(RankingCriteria criteria) {
         List<ClubRankingResponseDTO> ranking = matchRepository.getClubRanking();
-
-        ranking.sort(switch (sortBy) {
+        ranking.sort(switch (criteria) {
             case POINTS -> Comparator.comparing(ClubRankingResponseDTO::getPoints).reversed();
             case GAMES_PLAYED -> Comparator.comparing(ClubRankingResponseDTO::getGamesPlayed).reversed();
             case GAMES_WON -> Comparator.comparing(ClubRankingResponseDTO::getGamesWon).reversed();
@@ -139,10 +158,16 @@ public class MatchService {
             case GOALS_CONCEDED -> Comparator.comparing(ClubRankingResponseDTO::getGoalsConceded);
             case GOALS_DIFFERENCE -> Comparator.comparing(ClubRankingResponseDTO::getGoalsDifference).reversed();
         });
-
         return ranking;
     }
+
+    public List<ClubHeadToHeadDTO>getDirectHeadToHeadStats(Long club1Id, Long club2Id){
+        List<ClubHeadToHeadDTO> list = matchRepository.getDirectHeadToHeadStats(club1Id,club2Id);
+
+        for (ClubHeadToHeadDTO dto : list) {
+            dto.setGoalDifference(dto.getGoalsScored() - dto.getGoalsConceded());
+            dto.setPoints(dto.getGamesWon() * 3 + dto.getGamesDraw());
+        }
+        return list;
+    }
 }
-
-
-

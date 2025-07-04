@@ -32,6 +32,9 @@ public class ClubServiceTest {
     @Mock
     private StadiumRepository stadiumRepository;
 
+    @Mock
+    private MatchService matchService;
+
     @InjectMocks
     private ClubService clubService;
 
@@ -40,7 +43,6 @@ public class ClubServiceTest {
 
     @BeforeEach
     public void setUp() {
-        clubService = new ClubService(clubRepository,stadiumRepository);
 
         clubEntity = new ClubEntity();
         clubResponseDTO = new ClubResponseDTO();
